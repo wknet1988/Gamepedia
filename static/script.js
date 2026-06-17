@@ -31,7 +31,33 @@ const i18n = {
         epic_login: '登录 Epic 账号',
         epic_sync: '🔄 同步 Epic 游戏',
         epic_status: 'Epic 状态：',
-        not_logged_in: '未登录'
+        not_logged_in: '未登录',
+        // 授权管理相关
+        auth_management: '🔑 授权管理',
+        auth_platform: '平台',
+        auth_status: '状态',
+        auth_action: '操作',
+        auth_detecting: '检测中',
+        auth_logged_in: '已登录',
+        auth_not_logged_in: '未登录',
+        auth_steam: 'Steam',
+        auth_steam_family: 'Steam 家庭组',
+        auth_epic: 'Epic Games',
+        auth_gog: 'GOG',
+        auth_cubejoy: '方块游戏',
+        auth_save: '保存',
+        auth_login: '登录',
+        auth_sync: '同步',
+        auth_get_code: '获取授权码',
+        auth_submit: '提交',
+        auth_install_script: '安装脚本',
+        auth_open_store: '打开游戏库',
+        auth_family_script: '请使用油猴脚本同步',
+        auth_family_sync: '已同步',
+        auth_family_unsynced: '未同步',
+        auth_family_count: '({count} 款共享)',
+        auth_gog_script: '脚本同步',
+        auth_epic_code_placeholder: '授权码'
     },
     en: {
         app_name: 'Gamepedia',
@@ -64,7 +90,33 @@ const i18n = {
         epic_login: 'Login with Epic',
         epic_sync: '🔄 Sync Epic Games',
         epic_status: 'Epic status: ',
-        not_logged_in: 'Not logged in'
+        not_logged_in: 'Not logged in',
+        // Authorization related
+        auth_management: '🔑 Auth Manager',
+        auth_platform: 'Platform',
+        auth_status: 'Status',
+        auth_action: 'Action',
+        auth_detecting: 'Detecting...',
+        auth_logged_in: 'Logged in',
+        auth_not_logged_in: 'Not logged in',
+        auth_steam: 'Steam',
+        auth_steam_family: 'Steam Family',
+        auth_epic: 'Epic Games',
+        auth_gog: 'GOG',
+        auth_cubejoy: 'Cubejoy',
+        auth_save: 'Save',
+        auth_login: 'Login',
+        auth_sync: 'Sync',
+        auth_get_code: 'Get Auth Code',
+        auth_submit: 'Submit',
+        auth_install_script: 'Install Script',
+        auth_open_store: 'Open Library',
+        auth_family_script: 'Please use userscript to sync',
+        auth_family_sync: 'Synced',
+        auth_family_unsynced: 'Not synced',
+        auth_family_count: '({count} shared)',
+        auth_gog_script: 'Script Sync',
+        auth_epic_code_placeholder: 'Auth Code'
     }
 };
 
@@ -649,10 +701,10 @@ async function updateAuthStatus() {
         const data = await resp.json();
         const statusEl = document.getElementById('steam-status');
         if (data.logged_in) {
-            statusEl.innerText = `✅ 已登录 (${data.steamid})`;
+            statusEl.innerText = `✅ ${t.auth_logged_in} (${data.steamid})`;
             statusEl.style.color = '#6f6';
         } else {
-            statusEl.innerText = '❌ 未登录';
+            statusEl.innerText = `❌ ${t.auth_not_logged_in}`;
             statusEl.style.color = '#f66';
         }
     } catch(e) { console.error(e); }
@@ -663,10 +715,10 @@ async function updateAuthStatus() {
         const data = await resp.json();
         const statusEl = document.getElementById('epic-status');
         if (data.authenticated) {
-            statusEl.innerText = `✅ 已登录 (${data.account_name})`;
+            statusEl.innerText = `✅ ${t.auth_logged_in} (${data.account_name})`;
             statusEl.style.color = '#6f6';
         } else {
-            statusEl.innerText = '❌ 未登录';
+            statusEl.innerText = `❌ ${t.auth_not_logged_in}`;
             statusEl.style.color = '#f66';
         }
     } catch(e) { console.error(e); }
@@ -677,15 +729,15 @@ async function updateAuthStatus() {
         const data = await resp.json();
         const statusEl = document.getElementById('gog-status');
         if (data.count > 0) {
-            statusEl.innerText = `✅ 已同步 (${data.count} 款游戏)`;
+            statusEl.innerText = `✅ ${t.auth_sync} (${data.count} ${t.auth_gog_script})`;
             statusEl.style.color = '#6f6';
         } else {
-            statusEl.innerText = '⏳ 未同步';
+            statusEl.innerText = `⏳ ${t.auth_gog_script}`;
             statusEl.style.color = '#ffa';
         }
-    } catch (e) {
+    } catch(e) {
         console.error('GOG 状态检测失败', e);
-        document.getElementById('gog-status').innerText = '❌ 检测失败';
+        document.getElementById('gog-status').innerText = `❌ ${t.auth_not_logged_in}`;
         document.getElementById('gog-status').style.color = '#f66';
     }
 
@@ -695,14 +747,14 @@ async function updateAuthStatus() {
         const data = await resp.json();
         const statusEl = document.getElementById('family-status');
         if (data.count > 0) {
-            statusEl.innerText = `✅ 已同步 (${data.count} 款共享)`;
+            statusEl.innerText = `✅ ${t.auth_family_sync} ${t.auth_family_count.replace('{count}', data.count)}`;
             statusEl.style.color = '#6f6';
         } else {
-            statusEl.innerText = '⏳ 未同步';
+            statusEl.innerText = `⏳ ${t.auth_family_unsynced}`;
             statusEl.style.color = '#ffa';
         }
     } catch(e) {
-        document.getElementById('family-status').innerText = '请使用油猴脚本同步';
+        document.getElementById('family-status').innerText = `❌ ${t.auth_family_script}`;
         document.getElementById('family-status').style.color = '#aaa';
     }
 
@@ -712,15 +764,15 @@ async function updateAuthStatus() {
         const data = await resp.json();
         const statusEl = document.getElementById('cubejoy-status');
         if (data.count > 0) {
-            statusEl.innerText = `✅ 已同步 (${data.count} 款游戏)`;
+            statusEl.innerText = `✅ ${t.auth_sync} (${data.count} ${t.auth_cubejoy})`;
             statusEl.style.color = '#6f6';
         } else {
-            statusEl.innerText = '⏳ 未同步';
+            statusEl.innerText = `⏳ ${t.auth_family_unsynced}`;
             statusEl.style.color = '#ffa';
         }
-    } catch (e) {
+    } catch(e) {
         console.error('Cubejoy 状态检测失败', e);
-        document.getElementById('cubejoy-status').innerText = '❌ 检测失败';
+        document.getElementById('cubejoy-status').innerText = `❌ ${t.auth_not_logged_in}`;
         document.getElementById('cubejoy-status').style.color = '#f66';
     }
 }
