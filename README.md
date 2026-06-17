@@ -34,7 +34,7 @@ Prerequisites
 Download & Launch
 
     ⚠️ Windows Users
-    Double-click setup_en.bat (English) or setup_zh.bat (Chinese) for one-click installation. The script will automatically set up Python and install all dependencies.
+    Double-click setup.bat for one-click installation. The script will automatically set up Python and install all dependencies.
 
     Clone or download this repository:
     bash
