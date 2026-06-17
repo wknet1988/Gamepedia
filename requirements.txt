@@ -1,0 +1,6 @@
+flask>=2.0.0
+flask-cors>=3.0.0
+requests>=2.25.0
+vdf>=3.0
+legendary-gl>=0.20.0
+gogdl>=0.5.0
