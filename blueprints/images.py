@@ -27,24 +27,20 @@ def async_download(url, platform, game_id):
 def steam_image(appid):
     local_path = get_platform_image_path('steam', str(appid))
     if not local_path.exists():
-        # 从数据库获取 URL
         conn = sqlite3.connect('steam_games.db')
         c = conn.cursor()
         c.execute("SELECT header_url FROM games WHERE appid = ?", (appid,))
         row = c.fetchone()
         conn.close()
         if row and row[0]:
-            # 异步下载
             async_download(row[0], 'steam', str(appid))
-        # 立即返回占位图
         placeholder = get_placeholder_path('steam')
         if os.path.exists(placeholder):
             return send_file(placeholder, mimetype='image/png')
         else:
             abort(404)
     else:
-        # 已有缓存，直接返回
-        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
+        return send_file(local_path, conditional=True, max_age=31536000)
 
 @images_bp.route('/epic/<game_id>.jpg')
 def epic_image(game_id):
@@ -63,7 +59,7 @@ def epic_image(game_id):
         else:
             abort(404)
     else:
-        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
+        return send_file(local_path, conditional=True, max_age=31536000)
 
 @images_bp.route('/gog/<game_id>.jpg')
 def gog_image(game_id):
@@ -82,7 +78,7 @@ def gog_image(game_id):
         else:
             abort(404)
     else:
-        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
+        return send_file(local_path, conditional=True, max_age=31536000)
 
 @images_bp.route('/cubejoy/<game_id>.jpg')
 def cubejoy_image(game_id):
@@ -104,4 +100,4 @@ def cubejoy_image(game_id):
         else:
             abort(404)
     else:
-        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
+        return send_file(local_path, conditional=True, max_age=31536000)
