@@ -1,15 +1,10 @@
 from flask import Blueprint, send_file, abort
 import sqlite3
 import os
+import threading
 from core.cache import get_platform_image_path, download_platform_image
 
 images_bp = Blueprint('images', __name__, url_prefix='/images')
-
-def send_cached_file(file_path):
-    """发送文件并设置强缓存头"""
-    response = send_file(file_path, conditional=True)
-    response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
-    return response
 
 def get_placeholder_path(platform: str) -> str:
     filename = {
@@ -20,25 +15,36 @@ def get_placeholder_path(platform: str) -> str:
     }.get(platform, 'default_placeholder.png')
     return os.path.join(os.path.dirname(__file__), '..', 'static', filename)
 
+def async_download(url, platform, game_id):
+    """在后台线程下载图片"""
+    def _download():
+        download_platform_image(url, platform, game_id)
+    thread = threading.Thread(target=_download)
+    thread.daemon = True
+    thread.start()
+
 @images_bp.route('/<int:appid>.jpg')
 def steam_image(appid):
     local_path = get_platform_image_path('steam', str(appid))
     if not local_path.exists():
+        # 从数据库获取 URL
         conn = sqlite3.connect('steam_games.db')
         c = conn.cursor()
         c.execute("SELECT header_url FROM games WHERE appid = ?", (appid,))
         row = c.fetchone()
         conn.close()
-        if row:
-            download_platform_image(row[0], 'steam', str(appid))
-    if local_path.exists():
-        return send_cached_file(local_path)
-    else:
+        if row and row[0]:
+            # 异步下载
+            async_download(row[0], 'steam', str(appid))
+        # 立即返回占位图
         placeholder = get_placeholder_path('steam')
         if os.path.exists(placeholder):
             return send_file(placeholder, mimetype='image/png')
         else:
             abort(404)
+    else:
+        # 已有缓存，直接返回
+        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
 
 @images_bp.route('/epic/<game_id>.jpg')
 def epic_image(game_id):
@@ -50,16 +56,14 @@ def epic_image(game_id):
         row = c.fetchone()
         conn.close()
         if row and row[0]:
-            # 尝试下载图片
-            download_platform_image(row[0], 'epic', game_id)
-    if local_path.exists():
-        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
-    else:
+            async_download(row[0], 'epic', game_id)
         placeholder = get_placeholder_path('epic')
         if os.path.exists(placeholder):
             return send_file(placeholder, mimetype='image/png')
         else:
             abort(404)
+    else:
+        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
 
 @images_bp.route('/gog/<game_id>.jpg')
 def gog_image(game_id):
@@ -71,15 +75,14 @@ def gog_image(game_id):
         row = c.fetchone()
         conn.close()
         if row and row[0]:
-            download_platform_image(row[0], 'gog', game_id)
-    if local_path.exists():
-        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
-    else:
+            async_download(row[0], 'gog', game_id)
         placeholder = get_placeholder_path('gog')
         if os.path.exists(placeholder):
             return send_file(placeholder, mimetype='image/png')
         else:
             abort(404)
+    else:
+        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
 
 @images_bp.route('/cubejoy/<game_id>.jpg')
 def cubejoy_image(game_id):
@@ -94,12 +97,11 @@ def cubejoy_image(game_id):
             url = row[0]
             if url.startswith('//'):
                 url = 'https:' + url
-            download_platform_image(url, 'cubejoy', game_id)
-    if local_path.exists():
-        return send_cached_file(local_path)
-    else:
+            async_download(url, 'cubejoy', game_id)
         placeholder = get_placeholder_path('cubejoy')
         if os.path.exists(placeholder):
             return send_file(placeholder, mimetype='image/png')
         else:
             abort(404)
+    else:
+        return send_file(local_path, conditional=True, max_age=31536000, immutable=True)
