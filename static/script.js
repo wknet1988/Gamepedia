@@ -398,12 +398,8 @@ function appendGames(games) {
             const searchQuery = encodeURIComponent(game.name);
             storeUrl = `https://www.gog.com/zh/games?query=${searchQuery}`;
         } else if (currentPlatform.id === 'cubejoy') {
-            if (game.s_id) {
-                storeUrl = `https://store.cubejoy.com/html/en/store/goodsdetail/detail${game.s_id}.html`;
-            } else {
-                storeUrl = "https://www.cubejoy.com/"; // 标记无效
-            }
-            runUrl = `asuka://runapp/?id=${game.id}`;
+            const sId = game.s_id || '';
+            storeUrl = `https://store.cubejoy.com/html/en/store/goodsdetail/detail${sId}.html`;
         }
 
         // 平台图标
@@ -430,10 +426,10 @@ function appendGames(games) {
         if (currentPlatform.id !== 'gog') {
             let runData = '';
             if (currentPlatform.id === 'cubejoy') {
-                const runUrl = `asuka://runapp/?id=${game.id}`;
+                const id = game.id || game.game_id;
+                if (id) {
+                    const runUrl = `asuka://runapp/?id=${id}`;
                     runData = `data-runurl="${runUrl}"`;
-                } else {
-                    console.warn('Cubejoy 游戏缺少 id:', game);
                 }
             } else {
                 runData = `data-id="${game.id}" data-platform="${currentPlatform.id}"`;
