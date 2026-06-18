@@ -30,7 +30,4 @@ def get_platforms():
     except:
         pass
 
-    # 可选：如果数据库中有 Epic 游戏，也显示 Epic（但 Epic 显示条件已基于凭证）
-    # 这里保持原样
-
     return jsonify(platforms)

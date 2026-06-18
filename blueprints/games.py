@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from database import get_all_games, get_shelf_games, get_shelves
+from database import get_all_games, get_shelves
 from epic_db import get_all_epic_games
 from gog_db import get_all_gog_games
 from cubejoy_db import get_all_cubejoy_games
@@ -8,13 +8,11 @@ games_bp = Blueprint('games', __name__, url_prefix='/api/games')
 
 @games_bp.route('')
 def api_games():
-    """统一游戏列表接口，支持 platform 参数"""
     platform = request.args.get('platform', 'steam')
     limit = int(request.args.get('limit', 28))
     offset = int(request.args.get('offset', 0))
     search = request.args.get('search', '').strip()
 
-    # 根据平台获取原始数据
     if platform == 'steam':
         games_raw = get_all_games()
         games = [
@@ -32,7 +30,7 @@ def api_games():
             {
                 "id": g["game_id"],
                 "name": g["name"],
-                "image_url": f"/images_epic/{g['game_id']}.jpg"
+                "image_url": f"/images/epic/{g['game_id']}.jpg"
             }
             for g in games_raw
         ]
@@ -42,7 +40,7 @@ def api_games():
             {
                 "id": g["game_id"],
                 "name": g["name"],
-                "image_url": f"/images_gog/{g['game_id']}.jpg"
+                "image_url": f"/images/gog/{g['game_id']}.jpg"
             }
             for g in games_raw
         ]
@@ -53,14 +51,13 @@ def api_games():
                 "id": g["game_id"],
                 "s_id": g.get("s_id", ""),
                 "name": g["name"],
-                "image_url": f"/images_cubejoy/{g['game_id']}.jpg"
+                "image_url": f"/images/cubejoy/{g['game_id']}.jpg"
             }
             for g in games_raw
         ]
     else:
         return jsonify({"error": "Unsupported platform"}), 400
 
-    # 搜索过滤
     if search:
         games = [g for g in games if search.lower() in g['name'].lower()]
 
@@ -68,7 +65,6 @@ def api_games():
     paged = games[offset:offset+limit]
     return jsonify({"games": paged, "total": total})
 
-# 保留旧的 shelf 接口（如果有前端使用）
 @games_bp.route('/shelves')
 def api_get_shelves():
     shelves = get_shelves()

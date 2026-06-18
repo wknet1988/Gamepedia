@@ -1,54 +1,62 @@
 from flask import Blueprint, request, jsonify, redirect
 import time
+import subprocess
+import json
 import os
+import sys
 from core.config import config
-from epic_client import get_epic_auth_url, exchange_code_for_token, refresh_access_token, fetch_epic_games
-from epic_db import (
-    init_epic_db, get_all_epic_games, upsert_epic_game,
-    clear_epic_games, save_epic_auth, get_epic_auth
-)
-from core.cache import download_image, get_cache_path
+from epic_db import upsert_epic_game, clear_epic_games, save_epic_auth, get_epic_auth
+from cache_manager import download_platform_image
 
 epic_bp = Blueprint('epic', __name__, url_prefix='/api/epic')
 
-# 确保 Epic 数据库已初始化
-init_epic_db()
+# 配置目录（与旧版保持一致）
+LEGENDARY_CONFIG_DIR = os.path.join(os.path.dirname(__file__), '..', 'legendary_config')
+os.makedirs(LEGENDARY_CONFIG_DIR, exist_ok=True)
 
-# Epic OAuth 配置
-EPIC_CLIENT_ID = config.get('epic_client_id', '')
-EPIC_CLIENT_SECRET = config.get('epic_client_secret', '')
-EPIC_REDIRECT_URI = "http://localhost:5000/api/epic/callback"
+def find_legendary():
+    """查找 legendary 可执行文件"""
+    import shutil
+    legendary = shutil.which('legendary')
+    if legendary:
+        return legendary
+    scripts_dir = os.path.join(sys.prefix, 'Scripts')
+    legendary_exe = os.path.join(scripts_dir, 'legendary.exe')
+    if os.path.exists(legendary_exe):
+        return legendary_exe
+    raise FileNotFoundError("legendary not found")
 
+def run_legendary(args):
+    """运行 legendary 命令"""
+    legendary_exe = find_legendary()
+    env = os.environ.copy()
+    env['LEGENDARY_CONFIG_PATH'] = LEGENDARY_CONFIG_DIR
+    return subprocess.run(
+        [legendary_exe] + args,
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=60
+    )
+
+def is_epic_authenticated():
+    """检查是否已登录"""
+    result = run_legendary(["list-games", "--json", "--limit=1"])
+    return result.returncode == 0
+
+def get_epic_account_name():
+    """从 user.json 获取账号名"""
+    user_json = os.path.join(LEGENDARY_CONFIG_DIR, 'user.json')
+    if os.path.exists(user_json):
+        with open(user_json, 'r') as f:
+            data = json.load(f)
+            return data.get('displayName', 'Epic User')
+    return None
+
+# ---- 路由 ----
 @epic_bp.route('/login')
 def epic_login():
-    if not EPIC_CLIENT_ID:
-        return jsonify({"error": "Epic Client ID not configured"}), 500
-    url = get_epic_auth_url(EPIC_CLIENT_ID, EPIC_REDIRECT_URI)
-    return jsonify({"login_url": url})
-
-@epic_bp.route('/callback')
-def epic_callback():
-    code = request.args.get('code')
-    if not code:
-        return "Missing code", 400
-    token_data = exchange_code_for_token(EPIC_CLIENT_ID, EPIC_CLIENT_SECRET, code, EPIC_REDIRECT_URI)
-    if not token_data:
-        return "Token exchange failed", 400
-    save_epic_auth('access_token', token_data['access_token'])
-    save_epic_auth('refresh_token', token_data.get('refresh_token', ''))
-    save_epic_auth('user_id', token_data.get('account_id', ''))
-    save_epic_auth('expires_at', str(int(time.time()) + token_data.get('expires_in', 3600)))
-    save_epic_auth('account_name', token_data.get('display_name', ''))
-    # 自动同步
-    _sync_epic_library()
-    return redirect('/')
-
-@epic_bp.route('/status')
-def epic_status():
-    account_name = get_epic_auth('account_name')
-    if account_name:
-        return jsonify({"authenticated": True, "account_name": account_name})
-    return jsonify({"authenticated": False})
+    return jsonify({"login_url": "https://legendary.gl/epiclogin"})
 
 @epic_bp.route('/auth_code', methods=['POST'])
 def epic_auth_code():
@@ -57,54 +65,46 @@ def epic_auth_code():
     if not code:
         return jsonify({"success": False, "error": "Missing code"}), 400
     try:
-        token_data = exchange_code_for_token(EPIC_CLIENT_ID, EPIC_CLIENT_SECRET, code, EPIC_REDIRECT_URI)
-        if not token_data:
-            return jsonify({"success": False, "error": "Token exchange failed"}), 400
-        save_epic_auth('access_token', token_data['access_token'])
-        save_epic_auth('refresh_token', token_data.get('refresh_token', ''))
-        save_epic_auth('user_id', token_data.get('account_id', ''))
-        save_epic_auth('expires_at', str(int(time.time()) + token_data.get('expires_in', 3600)))
-        save_epic_auth('account_name', token_data.get('display_name', ''))
-        _sync_epic_library()
-        return jsonify({"success": True, "account_name": token_data.get('display_name', 'Epic User')})
+        result = run_legendary(["auth", "--code", code])
+        if result.returncode != 0:
+            return jsonify({"success": False, "error": result.stderr}), 400
+        if is_epic_authenticated():
+            return jsonify({"success": True, "account_name": get_epic_account_name()})
+        else:
+            return jsonify({"success": False, "error": "Authentication failed"}), 400
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+@epic_bp.route('/status')
+def epic_status():
+    if is_epic_authenticated():
+        return jsonify({"authenticated": True, "account_name": get_epic_account_name()})
+    return jsonify({"authenticated": False})
+
 @epic_bp.route('/sync', methods=['POST'])
-def epic_sync():
-    if not get_epic_auth('access_token'):
-        return jsonify({"success": False, "error": "Not authenticated"}), 401
-    _sync_epic_library()
-    games = get_all_epic_games()
+def sync_epic_library():
+    if not is_epic_authenticated():
+        return jsonify({"success": False, "error": "Not logged in"}), 401
+
+    result = run_legendary(["list-games", "--json"])
+    if result.returncode != 0:
+        return jsonify({"success": False, "error": result.stderr}), 500
+
+    games = json.loads(result.stdout)
+    from epic_db import clear_epic_games, upsert_epic_game
+    clear_epic_games()
+    now = int(time.time())
+    for game in games:
+        app_name = game.get('app_name')
+        title = game.get('app_title')
+        cover_url = f"https://cdn2.epicgames.com/{app_name}/offer/{app_name}.jpg"
+        download_platform_image(cover_url, 'epic', app_name)
+        upsert_epic_game(app_name, title, cover_url, app_name, now)
+
     return jsonify({"success": True, "count": len(games)})
 
-def _sync_epic_library():
-    access_token = get_epic_auth('access_token')
-    refresh_token = get_epic_auth('refresh_token')
-    expires_at = get_epic_auth('expires_at')
-    if not access_token:
-        return
-    # 刷新 token 如果过期
-    if expires_at and int(expires_at) < int(time.time()):
-        if refresh_token:
-            new_token = refresh_access_token(EPIC_CLIENT_ID, EPIC_CLIENT_SECRET, refresh_token)
-            if new_token:
-                access_token = new_token['access_token']
-                save_epic_auth('access_token', access_token)
-                save_epic_auth('refresh_token', new_token.get('refresh_token', refresh_token))
-                save_epic_auth('expires_at', str(int(time.time()) + new_token.get('expires_in', 3600)))
-            else:
-                print("Epic token refresh failed")
-                return
-        else:
-            return
-    games = fetch_epic_games(access_token)
-    now = int(time.time())
-    clear_epic_games()
-    for game in games:
-        app_name = game['app_name']
-        title = game['app_title']
-        cover_url = game.get('header_url')
-        if cover_url:
-            download_image(cover_url, 'epic', app_name)
-        upsert_epic_game(app_name, title, cover_url, app_name, now)
+# 可选：保留旧版 callback 路由（如果前端仍跳转至此）
+@epic_bp.route('/callback')
+def epic_callback():
+    # 此路由在旧版中用于 OAuth 回调，但新版已改用授权码方式，可忽略
+    return redirect('/')
