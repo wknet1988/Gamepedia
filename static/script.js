@@ -374,7 +374,6 @@ function appendGames(games) {
         return;
     }
 
-    // 占位图
     let placeholderPath = '/static/steam_placeholder.png';
     if (currentPlatform.id === 'epic') {
         placeholderPath = '/static/epic_placeholder.png';
@@ -445,14 +444,13 @@ function appendGames(games) {
             `;
         }
 
-        // 使用 data-src 实现懒加载，src 使用占位图（或透明图）
         card.innerHTML = `
             <div class="game-image-container" style="position: relative;">
                 <a href="${storeUrl}" target="_blank" rel="noopener noreferrer" style="display: block;">
                     <img class="lazy-img" data-src="${game.image_url}" 
                          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Crect width='200' height='100' fill='%232a3e55'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2389a3b5'%3ELoading...%3C/text%3E%3C/svg%3E" 
                          alt="${escapeHtml(game.name)}"
-                         onerror="this.src='${placeholderPath}'">
+                         onerror="if(this.dataset.src && !this.dataset.retry){ this.dataset.retry='1'; this.src=this.dataset.src; } else { this.onerror=null; this.src='${placeholderPath}'; }">
                 </a>
                 ${badgeHtml}
             </div>
