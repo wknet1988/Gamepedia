@@ -63,3 +63,11 @@ def get_epic_auth(key: str) -> str:
     row = c.fetchone()
     conn.close()
     return row[0] if row else None
+
+def count_epic_games() -> int:
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM epic_games")
+    count = c.fetchone()[0]
+    conn.close()
+    return count

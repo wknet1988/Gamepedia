@@ -151,3 +151,69 @@ def parse_steam_groups(steam_install_path: str, steamid: str) -> Dict[str, List[
         if apps:
             groups[group_name] = apps
     return groups
+
+def get_family_info_with_token(access_token, steamid):
+    """通过 access_token 获取家庭组信息（用于油猴脚本同步）"""
+    url = 'https://api.steampowered.com/IFamilyGroupsService/GetFamilyGroupForUser/v1/'
+    params = {
+        'access_token': access_token,
+        'steamid': steamid,
+        'include_family_group_response': True,
+    }
+    resp = requests.get(url, params=params, verify=False)
+    if resp.status_code != 200:
+        return None
+    data = resp.json()
+    response = data.get('response', {})
+    if 'family_groupid' not in response:
+        return None
+    family_group = response.get('family_group', {})
+    members = family_group.get('members', [])
+    # 获取成员昵称
+    steamid_to_name = {}
+    if members:
+        name_url = 'https://api.steampowered.com/IPlayerService/GetPlayerLinkDetails/v1/'
+        name_params = {'access_token': access_token}
+        for idx, m in enumerate(members):
+            name_params[f'steamids[{idx}]'] = m['steamid']
+        name_resp = requests.get(name_url, params=name_params, verify=False)
+        if name_resp.status_code == 200:
+            name_data = name_resp.json()
+            accounts = name_data.get('response', {}).get('accounts', [])
+            for acc in accounts:
+                steamid_to_name[acc['public_data']['steamid']] = acc['public_data']['persona_name']
+    for m in members:
+        m['userName'] = steamid_to_name.get(m['steamid'], 'Unknown')
+    return {
+        'family_groupid': response['family_groupid'],
+        'family_name': family_group.get('name', ''),
+        'family_member': members,
+        'steamIdtoName': steamid_to_name
+    }
+
+def get_family_shared_games_with_token(access_token, family_groupid):
+    """通过 access_token 获取家庭共享游戏列表"""
+    url = 'https://api.steampowered.com/IFamilyGroupsService/GetSharedLibraryApps/v1/'
+    params = {
+        'access_token': access_token,
+        'family_groupid': family_groupid,
+        'include_own': True,
+        'include_excluded': False,
+        'include_non_games': False,
+    }
+    resp = requests.get(url, params=params, verify=False)
+    if resp.status_code != 200:
+        return []
+    data = resp.json()
+    apps = data.get('response', {}).get('apps', [])
+    result = []
+    for app in apps:
+        if app.get('exclude_reason', 0) == 0:
+            result.append({
+                'appid': app['appid'],
+                'name': app.get('name', 'Unknown'),
+                'header_url': f'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/{app["appid"]}/header.jpg',
+                'owners': app.get('owner_steamids', []),
+                'rt_time_acquired': app.get('rt_time_acquired', 0)
+            })
+    return result
