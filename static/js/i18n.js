@@ -57,6 +57,10 @@ const i18n = {
         auth_family_count: '({count} 款共享)',
         auth_gog_script: '脚本同步',
         auth_epic_code_placeholder: '授权码',
+        sponsor: '❤️ 赞助',
+        sponsor_title: '☕ 赞助支持',
+        sponsor_desc: '如果您觉得本项目有帮助，欢迎赞助以支持持续开发！',
+        sponsor_thanks: '感谢您的支持！',
     },
     en: {
         app_name: 'Gamepedia',
@@ -115,6 +119,10 @@ const i18n = {
         auth_family_count: '({count} shared)',
         auth_gog_script: 'Script Sync',
         auth_epic_code_placeholder: 'Auth Code',
+        sponsor: '❤️ Sponsor',
+        sponsor_title: '☕ Sponsor Support',
+        sponsor_desc: 'If you find this project helpful, welcome to sponsor to support continued development!',
+        sponsor_thanks: 'Thank you for your support!',
     }
 };
 

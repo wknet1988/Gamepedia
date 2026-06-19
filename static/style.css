@@ -381,3 +381,23 @@ body.custom-bg {
 html {
     overflow-y: scroll;
 }
+
+/* 赞助模态框 */
+#sponsor-modal .modal-content {
+    text-align: center;
+}
+#sponsor-modal img {
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.2s;
+}
+#sponsor-modal img:hover {
+    transform: scale(1.02);
+}
+#sponsor-modal .close-sponsor-modal {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #c79a2e;
+}

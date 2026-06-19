@@ -26,6 +26,9 @@
                 <button id="auth-btn" data-i18n="auth_management" style="margin-bottom: 10px;">🔑 授权管理</button>
                 <button id="settings-btn" data-i18n="settings">⚙️ 设置</button>
             </div>
+            <div style="margin-top: 20px; text-align: center;">
+                <button id="sponsor-btn" style="background: #e6b422; color: #2c1a0c; padding: 6px 16px; border-radius: 30px; font-weight: bold;">❤️ 赞助</button>
+            </div>
         </div>
         <div class="main">
             <div class="search-bar">
@@ -120,6 +123,43 @@
     </div>
 </div>
 
+<!-- 赞助模态框 -->
+<div id="sponsor-modal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width: 600px;">
+        <span class="close-sponsor-modal">&times;</span>
+        <h3 data-i18n="sponsor_title">☕ 赞助支持</h3>
+        <p data-i18n="sponsor_desc">如果您觉得本项目有帮助，欢迎赞助以支持持续开发！</p>
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px;">
+            <!-- Alipay -->
+            <div style="text-align: center; margin: 10px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
+                    <img src="/static/images/alipay.ico" alt="Alipay" style="width: 24px; height: 24px;">
+                    <span style="font-weight: bold;">支付宝</span>
+                </div>
+                <img src="/static/images/alipay.png" alt="Alipay QR" style="width: 180px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+            </div>
+            <!-- WeChat Pay -->
+            <div style="text-align: center; margin: 10px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
+                    <img src="/static/images/wechat.ico" alt="WeChat Pay" style="width: 24px; height: 24px;">
+                    <span style="font-weight: bold;">微信支付</span>
+                </div>
+                <img src="/static/images/wechat.png" alt="WeChat QR" style="width: 180px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+            </div>
+            <!-- PayPal -->
+            <div style="text-align: center; margin: 10px;">
+                <a href="https://www.paypal.me/wknet1988" target="_blank" style="display: inline-block; padding: 10px 24px; background: #0070ba; color: white; border-radius: 30px; text-decoration: none; font-weight: bold;">
+                    <img src="/static/images/paypal.ico" alt="PayPal" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
+                    PayPal
+                </a>
+            </div>
+        </div>
+        <div style="margin-top: 20px; font-size: 12px; color: #888;">
+            <span data-i18n="sponsor_thanks">感谢您的支持！</span>
+        </div>
+    </div>
+</div>
+
     <!-- 设置模态框（仅保留全局设置） -->
     <div id="settings-modal" class="modal" style="display:none;">
         <div class="modal-content">
@@ -133,6 +173,7 @@
             </div>
             <div id="settings-message" style="margin-top: 15px; color: #ffaa66;"></div>
             <div id="app-version" style="margin-top:15px; font-size:12px; color:#888;"></div>
+            <div id="app-copyright" style="margin-top:4px; font-size:11px; color:#666;"></div>
         </div>
     </div>
 
