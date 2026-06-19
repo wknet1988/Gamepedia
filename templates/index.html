@@ -194,6 +194,20 @@
         </div>
     </div>
 
+    <!-- 同步进度浮层 -->
+<div id="sync-progress-modal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <h3>🔄 同步中...</h3>
+        <div style="margin: 20px 0;">
+            <div id="sync-progress-bar" style="width:100%; height:20px; background:#2a3e55; border-radius:10px; overflow:hidden;">
+                <div id="sync-progress-fill" style="width:0%; height:100%; background:#66c0f4; border-radius:10px; transition:width 0.3s;"></div>
+            </div>
+            <div id="sync-progress-text" style="margin-top:10px; text-align:center; color:#c7d5e0;">准备中...</div>
+        </div>
+        <button id="sync-progress-close" style="display:none;" onclick="closeSyncProgress()">关闭</button>
+    </div>
+</div>
+
     <!-- 回到顶部按钮 -->
     <button id="back-to-top" style="position:fixed; bottom:80px; right:20px; z-index:9999; display:none; width:40px; height:40px; border-radius:50%; background:#2c5a2e; color:white; border:none; cursor:pointer; font-size:20px; box-shadow:0 2px 8px rgba(0,0,0,0.3); opacity:0.8; transition:opacity 0.2s;" title="回到顶部">↑</button>
 

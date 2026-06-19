@@ -1,7 +1,10 @@
 from flask import Blueprint, request, jsonify, session, redirect
 from core.config import config, save_config
 from steam_client import get_steam_login_url, validate_steam_callback
-from database import init_db
+from core.task_manager import task_manager
+import os
+import threading
+import uuid
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api')
 
@@ -52,9 +55,11 @@ def api_set_api_key():
         session['api_key'] = api_key
         config['api_key'] = api_key
         save_config(config)
-        # 触发 Steam 游戏库同步（可移到后台任务）
+        # 触发 Steam 游戏库同步
         from steam_client import refresh_games_library
-        refresh_games_library(force=True)
+        steamid = session.get('steamid') or config.get('steamid')
+        steam_path = session.get('steam_path') or config.get('steam_path')
+        refresh_games_library(steamid, api_key, steam_path, force=True)
         return jsonify({"success": True})
     return jsonify({"success": False}), 400
 
@@ -68,15 +73,37 @@ def api_set_steam_path():
         save_config(config)
         # 刷新 Steam 自定义列表
         from steam_client import refresh_shelves_from_steam
-        refresh_shelves_from_steam()
+        steamid = session.get('steamid') or config.get('steamid')
+        refresh_shelves_from_steam(steam_path, steamid)
         return jsonify({"success": True})
     return jsonify({"success": False, "error": "路径无效"}), 400
 
 @auth_bp.route('/init_library', methods=['POST'])
 def api_init_library():
-    from steam_client import refresh_games_library
-    success = refresh_games_library(force=True)
-    if success:
-        return jsonify({"success": True})
-    else:
-        return jsonify({"success": False}), 500
+    steamid = session.get('steamid') or config.get('steamid')
+    api_key = session.get('api_key') or config.get('api_key')
+    steam_path = session.get('steam_path') or config.get('steam_path')
+
+    if not steamid or not api_key:
+        return jsonify({"success": False, "error": "Missing credentials"}), 400
+
+    task_id = str(uuid.uuid4())
+    task_manager.create_task(task_id, 100)
+
+    # 在后台线程执行同步
+    def run_sync():
+        from steam_client import refresh_games_library
+        refresh_games_library(steamid, api_key, steam_path, force=True, task_id=task_id)
+
+    thread = threading.Thread(target=run_sync)
+    thread.daemon = True
+    thread.start()
+
+    return jsonify({"task_id": task_id})
+
+@auth_bp.route('/task/<task_id>')
+def get_task_status(task_id):
+    status = task_manager.get_task(task_id)
+    if not status:
+        return jsonify({"error": "Task not found"}), 404
+    return jsonify(status)

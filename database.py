@@ -60,15 +60,28 @@ def get_all_games() -> List[Dict[str, Any]]:
     conn.close()
     return [{"appid": row[0], "name": row[1], "image_url": row[2], "type": row[3]} for row in rows]
 
-def upsert_game(appid: int, name: str, header_url: str, last_updated: int, game_type: str = 'owned'):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute('''
-        INSERT OR REPLACE INTO games (appid, name, header_url, last_updated, type)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (appid, name, header_url, last_updated, game_type))
-    conn.commit()
-    conn.close()
+def get_db_connection():
+    """获取数据库连接，设置超时"""
+    return sqlite3.connect(DB_PATH, timeout=10)  # 10秒超时
+
+def upsert_game(appid: int, name: str, header_url: str, last_updated: int, game_type: str = 'owned', retries=3):
+    for attempt in range(retries):
+        try:
+            conn = get_db_connection()
+            c = conn.cursor()
+            c.execute('''
+                INSERT OR REPLACE INTO games (appid, name, header_url, last_updated, type)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (appid, name, header_url, last_updated, game_type))
+            conn.commit()
+            conn.close()
+            return
+        except sqlite3.OperationalError as e:
+            if 'database is locked' in str(e) and attempt < retries - 1:
+                time.sleep(0.5)
+                continue
+            else:
+                raise
 
 def clear_shelves():
     conn = sqlite3.connect(DB_PATH)

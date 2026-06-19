@@ -174,3 +174,68 @@ if (installScriptBtn) {
         alert('脚本已下载，请打开 Tampermonkey 管理面板 → 实用程序 → 从文件安装，选择刚下载的文件。');
     });
 }
+
+// ==================== 同步进度管理 ====================
+let syncPollingInterval = null;
+
+function showSyncProgress(taskId) {
+    const modal = document.getElementById('sync-progress-modal');
+    modal.style.display = 'block';
+    const fill = document.getElementById('sync-progress-fill');
+    const text = document.getElementById('sync-progress-text');
+    fill.style.width = '0%';
+    text.innerText = '准备中...';
+
+    if (syncPollingInterval) clearInterval(syncPollingInterval);
+
+    syncPollingInterval = setInterval(async () => {
+        try {
+            const resp = await fetch(`/api/task/${taskId}`);
+            const data = await resp.json();
+            if (data.error) {
+                clearInterval(syncPollingInterval);
+                text.innerText = '错误: ' + data.error;
+                document.getElementById('sync-progress-close').style.display = 'inline-block';
+                return;
+            }
+            fill.style.width = data.progress + '%';
+            text.innerText = data.message || `进度 ${data.progress}%`;
+            if (data.done) {
+                clearInterval(syncPollingInterval);
+                document.getElementById('sync-progress-close').style.display = 'inline-block';
+                if (data.error) {
+                    text.innerText = '❌ 同步失败: ' + data.error;
+                } else {
+                    text.innerText = '✅ 同步完成！';
+                    // 刷新游戏列表
+                    resetAndLoadGames();
+                }
+            }
+        } catch (e) {
+            console.error('轮询进度失败', e);
+        }
+    }, 1500);
+}
+
+function closeSyncProgress() {
+    const modal = document.getElementById('sync-progress-modal');
+    modal.style.display = 'none';
+    document.getElementById('sync-progress-close').style.display = 'none';
+    if (syncPollingInterval) clearInterval(syncPollingInterval);
+}
+
+// 修改同步按钮事件（以 Steam 为例）
+document.getElementById('auth-steam-sync')?.addEventListener('click', async () => {
+    const resp = await fetch('/api/init_library', { method: 'POST' });
+    const data = await resp.json();
+    if (data.task_id) {
+        showSyncProgress(data.task_id);
+    } else if (data.success) {
+        alert('同步已触发（无进度跟踪）');
+        updateAuthStatus();
+    } else {
+        alert('同步失败：' + (data.error || '未知错误'));
+    }
+});
+
+// 同样修改 Epic 和 GOG 的同步按钮（如有需要，可复用类似逻辑）

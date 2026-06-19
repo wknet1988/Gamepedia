@@ -148,8 +148,8 @@ document.getElementById('auth-family-install')?.addEventListener('click', () => 
 });
 
 document.getElementById('auth-family-open')?.addEventListener('click', () => {
-    window.open('https://store.steampowered.com', '_blank');
-    alert('请在 Steam 商店页面点击右下角的“同步到游戏藏经阁”按钮同步家庭库。');
+    window.open('https://store.steampowered.com/account/', '_blank');
+    alert('请在 Steam 商店页面点击右下角的“同步到GP游戏收藏馆”按钮同步家庭库。');
 });
 
 document.getElementById('auth-epic-login')?.addEventListener('click', () => {
