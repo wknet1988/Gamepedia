@@ -44,6 +44,13 @@ def init_db():
             PRIMARY KEY (shelf_id, appid)
         )
     ''')
+    
+    # ---------- 添加索引提升查询性能 ----------
+    # games 表的 type 字段常用于筛选家庭共享游戏
+    c.execute("CREATE INDEX IF NOT EXISTS idx_games_type ON games (type)")
+    # shelf_games 表的 shelf_id 用于快速获取货架游戏
+    c.execute("CREATE INDEX IF NOT EXISTS idx_shelf_games_shelf_id ON shelf_games (shelf_id)")
+    
     conn.commit()
     conn.close()
 

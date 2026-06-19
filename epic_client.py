@@ -17,24 +17,28 @@ def find_legendary():
         return legendary_exe
     raise FileNotFoundError("legendary not found")
 
-def run_legendary(args, config_dir=None):
+def run_legendary(args, config_dir=None, timeout=60):
     legendary_exe = find_legendary()
     env = os.environ.copy()
     if config_dir:
         env['LEGENDARY_CONFIG_PATH'] = config_dir
-    return subprocess.run(
-        [legendary_exe] + args,
-        capture_output=True,
-        text=True,
-        env=env,
-        timeout=60
-    )
+    try:
+        return subprocess.run(
+            [legendary_exe] + args,
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=timeout
+        )
+    except subprocess.TimeoutExpired:
+        print(f"Legendary 命令超时 ({timeout}s): {' '.join(args)}")
+        return None
 
 def is_epic_authenticated(config_dir=None):
     if not config_dir:
         config_dir = os.path.expanduser("~/.config/legendary")
-    result = run_legendary(["list-games", "--json", "--limit=1"], config_dir)
-    return result.returncode == 0
+    result = run_legendary(["list-games", "--json", "--limit=1"], config_dir, timeout=10)
+    return result is not None and result.returncode == 0
 
 def get_epic_account_name(config_dir=None):
     if not config_dir:
@@ -46,44 +50,28 @@ def get_epic_account_name(config_dir=None):
             return data.get('displayName', 'Epic User')
     return None
 
-def fetch_epic_game_details(app_name: str, config_dir: str) -> dict:
-    result = run_legendary(["info", app_name, "--json"], config_dir)
-    if result.returncode != 0:
-        return {}
-    try:
-        data = json.loads(result.stdout)
-        asset_info = data.get('asset_info', {})
-        key_images = asset_info.get('key_images', [])
-        for img in key_images:
-            if img.get('type') in ('OfferImageTall', 'Thumbnail'):
-                return {'cover_url': img.get('url', '')}
-        assets = asset_info.get('assets', [])
-        for asset in assets:
-            if asset.get('type') == 'THUMBNAIL':
-                return {'cover_url': asset.get('url', '')}
-    except Exception as e:
-        print(f"解析 Epic 游戏详情失败: {app_name}, {e}")
-    return {}
-
 def fetch_epic_games(access_token=None, config_dir=None):
+    """仅获取游戏列表，封面图用构造 URL，不调用 info（避免超时）"""
     if not config_dir:
         config_dir = os.path.expanduser("~/.config/legendary")
-    result = run_legendary(["list-games", "--json"], config_dir)
-    if result.returncode != 0:
+    result = run_legendary(["list-games", "--json"], config_dir, timeout=30)
+    if result is None or result.returncode != 0:
         return []
-    games = json.loads(result.stdout)
-    game_list = []
-    for game in games:
-        app_name = game.get('app_name')
-        title = game.get('app_title')
-        details = fetch_epic_game_details(app_name, config_dir)
-        cover_url = details.get('cover_url', '')
-        if not cover_url:
+    try:
+        games = json.loads(result.stdout)
+        game_list = []
+        for game in games:
+            app_name = game.get('app_name')
+            title = game.get('app_title')
+            # 构造封面图 URL（不一定有效，但至少不会超时）
             cover_url = f"https://cdn2.epicgames.com/{app_name}/offer/{app_name}.jpg"
-        game_list.append({
-            'game_id': app_name,
-            'name': title,
-            'header_url': cover_url,
-            'sandbox': app_name,
-        })
-    return game_list
+            game_list.append({
+                'game_id': app_name,
+                'name': title,
+                'header_url': cover_url,
+                'sandbox': app_name,
+            })
+        return game_list
+    except Exception as e:
+        print(f"解析 Epic 游戏列表失败: {e}")
+        return []

@@ -2,11 +2,11 @@
 // @name         GOG Sync to Gamepedia
 // @name-zh      GOG 同步到GP游戏收藏馆
 // @namespace    http://localhost:5000
-// @version      2.1
+// @version      2.1.1
 // @description  Fetch GOG library and sync to Gamepedia
 // @description-zh  从 GOG 账户页面抓取游戏列表并同步到本地GP游戏收藏馆
 // @author       Gamepedia
-// @match        https://www.gog.com/account*
+// @match        https://www.gog.com/*account*
 // @grant        GM_xmlhttpRequest
 // @connect      localhost
 // @connect      127.0.0.1

@@ -1,14 +1,15 @@
 from flask import Blueprint, request, jsonify
 import sqlite3
 import time
-from core.cache import download_image, get_cached_image_path
-from database import DB_PATH
 from steam_client import get_family_info_with_token, get_family_shared_games_with_token
+from database import DB_PATH, upsert_game
+from cache_manager import download_image, get_cached_image_path
 
-family_bp = Blueprint('family', __name__, url_prefix='/api/family')
+family_bp = Blueprint('family', __name__, url_prefix='/api')
 
-@family_bp.route('/sync', methods=['POST'])
+@family_bp.route('/sync_family_library', methods=['POST'])
 def api_sync_family_library():
+    """油猴脚本调用此接口同步家庭共享游戏"""
     data = request.json
     access_token = data.get('access_token')
     steamid = data.get('steamid')
@@ -21,11 +22,11 @@ def api_sync_family_library():
 
     family_games = get_family_shared_games_with_token(access_token, family_info['family_groupid'])
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10)
     c = conn.cursor()
     now = int(time.time())
 
-    # 获取自己购买的游戏 ID (type='owned')
+    # 获取已有 owned 游戏 ID
     c.execute("SELECT appid FROM games WHERE type = 'owned'")
     owned_appids = {row[0] for row in c.fetchall()}
 
@@ -34,9 +35,11 @@ def api_sync_family_library():
         name = game['name']
         header_url = game['header_url']
 
+        # 如果已 owned，跳过
         if appid in owned_appids:
             continue
 
+        # 检查是否存在
         c.execute("SELECT 1 FROM games WHERE appid = ?", (appid,))
         exists = c.fetchone() is not None
         if exists:
@@ -46,6 +49,7 @@ def api_sync_family_library():
             c.execute("INSERT INTO games (appid, name, header_url, last_updated, type) VALUES (?, ?, ?, ?, ?)",
                       (appid, name, header_url, now, 'shared'))
 
+        # 下载图片
         if not get_cached_image_path(appid).exists():
             download_image(header_url, appid)
 
@@ -54,9 +58,9 @@ def api_sync_family_library():
 
     return jsonify({"success": True, "family_name": family_info['family_name'], "games_count": len(family_games)})
 
-@family_bp.route('/count')
+@family_bp.route('/family/count')
 def family_count():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM games WHERE type = 'shared'")
     count = c.fetchone()[0]

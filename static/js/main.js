@@ -140,21 +140,27 @@ window.addEventListener('click', (e) => {
 });
 
 // 赞助模态框
-const donateModal = document.getElementById('donate-modal');
-const donateBtn = document.getElementById('donate-btn');
-const closeDonateBtn = document.querySelector('.close-donate-modal');
+document.addEventListener('DOMContentLoaded', function() {
+    const sponsorModal = document.getElementById('sponsor-modal');
+    const sponsorBtn = document.getElementById('sponsor-btn');
+    const closeSponsorBtn = document.querySelector('.close-sponsor-modal');
 
-donateBtn?.addEventListener('click', () => {
-    donateModal.style.display = 'block';
-});
+    if (sponsorBtn && sponsorModal) {
+        sponsorBtn.addEventListener('click', () => {
+            sponsorModal.style.display = 'block';
+        });
 
-closeDonateBtn?.addEventListener('click', () => {
-    donateModal.style.display = 'none';
-});
+        closeSponsorBtn?.addEventListener('click', () => {
+            sponsorModal.style.display = 'none';
+        });
 
-window.addEventListener('click', (e) => {
-    if (e.target === donateModal) {
-        donateModal.style.display = 'none';
+        window.addEventListener('click', (e) => {
+            if (e.target === sponsorModal) {
+                sponsorModal.style.display = 'none';
+            }
+        });
+    } else {
+        console.warn('赞助按钮或模态框未找到');
     }
 });
 
@@ -175,16 +181,22 @@ if (installScriptBtn) {
     });
 }
 
-// ==================== 同步进度管理 ====================
+// ==================== 同步进度管理（顶部条 + 持久化） ====================
 let syncPollingInterval = null;
+const SYNC_TASK_KEY = 'sync_task_id';
 
 function showSyncProgress(taskId) {
-    const modal = document.getElementById('sync-progress-modal');
-    modal.style.display = 'block';
+    // 保存 taskId 到 localStorage，以便刷新后恢复
+    localStorage.setItem(SYNC_TASK_KEY, taskId);
+
+    const container = document.getElementById('sync-progress-container');
     const fill = document.getElementById('sync-progress-fill');
     const text = document.getElementById('sync-progress-text');
+    const percent = document.getElementById('sync-progress-percent');
+    container.style.display = 'block';
     fill.style.width = '0%';
     text.innerText = '准备中...';
+    percent.innerText = '0%';
 
     if (syncPollingInterval) clearInterval(syncPollingInterval);
 
@@ -194,22 +206,26 @@ function showSyncProgress(taskId) {
             const data = await resp.json();
             if (data.error) {
                 clearInterval(syncPollingInterval);
-                text.innerText = '错误: ' + data.error;
-                document.getElementById('sync-progress-close').style.display = 'inline-block';
+                text.innerText = '❌ 错误: ' + data.error;
+                percent.innerText = '';
+                localStorage.removeItem(SYNC_TASK_KEY);
                 return;
             }
             fill.style.width = data.progress + '%';
+            percent.innerText = data.progress + '%';
             text.innerText = data.message || `进度 ${data.progress}%`;
             if (data.done) {
                 clearInterval(syncPollingInterval);
-                document.getElementById('sync-progress-close').style.display = 'inline-block';
+                localStorage.removeItem(SYNC_TASK_KEY);
                 if (data.error) {
                     text.innerText = '❌ 同步失败: ' + data.error;
                 } else {
                     text.innerText = '✅ 同步完成！';
-                    // 刷新游戏列表
                     resetAndLoadGames();
                 }
+                setTimeout(() => {
+                    container.style.display = 'none';
+                }, 3000);
             }
         } catch (e) {
             console.error('轮询进度失败', e);
@@ -217,15 +233,32 @@ function showSyncProgress(taskId) {
     }, 1500);
 }
 
-function closeSyncProgress() {
-    const modal = document.getElementById('sync-progress-modal');
-    modal.style.display = 'none';
-    document.getElementById('sync-progress-close').style.display = 'none';
-    if (syncPollingInterval) clearInterval(syncPollingInterval);
+// 页面加载时恢复进度（如果有未完成的任务）
+function restoreSyncProgress() {
+    const taskId = localStorage.getItem(SYNC_TASK_KEY);
+    if (taskId) {
+        // 检查任务是否仍在运行
+        fetch(`/api/task/${taskId}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.error || data.done) {
+                    localStorage.removeItem(SYNC_TASK_KEY);
+                    return;
+                }
+                showSyncProgress(taskId);
+            })
+            .catch(() => {});
+    }
 }
 
-// 修改同步按钮事件（以 Steam 为例）
+// 在页面初始化时调用
+document.addEventListener('DOMContentLoaded', () => {
+    restoreSyncProgress();
+});
+
+// ---- 同步按钮事件（以 Steam 为例） ----
 document.getElementById('auth-steam-sync')?.addEventListener('click', async () => {
+    localStorage.removeItem(SYNC_TASK_KEY); // 清除旧任务
     const resp = await fetch('/api/init_library', { method: 'POST' });
     const data = await resp.json();
     if (data.task_id) {
@@ -234,8 +267,41 @@ document.getElementById('auth-steam-sync')?.addEventListener('click', async () =
         alert('同步已触发（无进度跟踪）');
         updateAuthStatus();
     } else {
-        alert('同步失败：' + (data.error || '未知错误'));
+        //alert('同步失败：' + (data.error || '未知错误'));
     }
 });
 
-// 同样修改 Epic 和 GOG 的同步按钮（如有需要，可复用类似逻辑）
+
+document.getElementById('auth-epic-sync')?.addEventListener('click', async () => {
+    localStorage.removeItem(SYNC_TASK_KEY); // 清除旧任务
+    try {
+        const resp = await fetch('/api/epic/sync', { method: 'POST' });
+        const data = await resp.json();
+        if (data.task_id) {
+            showSyncProgress(data.task_id);
+        } else if (data.success) {
+            alert(`Epic 同步成功！共 ${data.count} 款游戏`);
+            updateAuthStatus();
+        } else {
+            //alert('同步失败：' + (data.error || '未知错误'));
+        }
+    } catch (err) {
+        console.error('Epic 同步请求异常:', err);
+        alert('网络错误，请确保服务已启动');
+    }
+});
+
+// GOG 同步（带进度）
+document.getElementById('auth-gog-sync')?.addEventListener('click', async () => {
+    localStorage.removeItem(SYNC_TASK_KEY); // 清除旧任务
+    const resp = await fetch('/api/gog/sync', { method: 'POST' });
+    const data = await resp.json();
+    if (data.task_id) {
+        showSyncProgress(data.task_id);
+    } else if (data.success) {
+        alert(`GOG 同步成功！共 ${data.count} 款游戏`);
+        updateAuthStatus();
+    } else {
+        //alert('同步失败：' + (data.error || '未知错误'));
+    }
+});

@@ -37,31 +37,29 @@ def is_image_valid(file_path):
             return False
     return True  # 没有 PIL 时，只通过 imghdr 检测
 
-def download_with_validation(url, file_path, max_retries=1):
+def download_with_validation(url, file_path, max_retries=1, headers=None):
     """下载图片到临时文件，验证有效后替换原文件"""
+    if headers is None:
+        headers = {}
     for attempt in range(max_retries + 1):
         try:
-            # 使用临时文件，避免写入过程中失败导致残留
             temp_path = file_path.with_suffix('.tmp')
-            resp = requests.get(url, stream=True, timeout=10, verify=False)
+            # 传递 headers 给 requests.get
+            resp = requests.get(url, stream=True, timeout=10, headers=headers, verify=False)
             if resp.status_code != 200:
                 if attempt < max_retries:
                     continue
                 else:
                     return False
-            # 写入临时文件
             with open(temp_path, 'wb') as f:
                 for chunk in resp.iter_content(1024):
                     f.write(chunk)
-            # 验证临时文件
             if is_image_valid(temp_path):
-                # 替换原文件
                 if file_path.exists():
                     file_path.unlink()
                 temp_path.rename(file_path)
                 return True
             else:
-                # 删除无效临时文件
                 temp_path.unlink()
                 print(f"下载的图片无效，已删除: {url}")
                 if attempt < max_retries:

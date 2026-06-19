@@ -14,7 +14,8 @@ def cubejoy_sync():
     games = data.get('games', [])
     if not games:
         return jsonify({"success": False, "error": "No games data"}), 400
-
+    from cubejoy_db import clear_cubejoy_games, upsert_cubejoy_game
+    from cache_manager import download_cubejoy_image  # 改为专用函数
     clear_cubejoy_games()
     now = int(time.time())
     for game in games:
@@ -23,7 +24,7 @@ def cubejoy_sync():
         title = game.get('title', 'Unknown')
         image_url = game.get('image_url', '')
         if image_url:
-            download_image(image_url, 'cubejoy', game_id)
+            download_cubejoy_image(image_url, game_id)  # 调用专用函数
         upsert_cubejoy_game(game_id, s_id, title, image_url, now)
     return jsonify({"success": True, "count": len(games)})
 

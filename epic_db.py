@@ -71,3 +71,28 @@ def count_epic_games() -> int:
     count = c.fetchone()[0]
     conn.close()
     return count
+
+def get_local_epic_ids() -> set:
+    """获取本地所有游戏 ID"""
+    conn = sqlite3.connect(DB_PATH, timeout=10)
+    c = conn.cursor()
+    c.execute("SELECT game_id FROM epic_games")
+    ids = {row[0] for row in c.fetchall()}
+    conn.close()
+    return ids
+
+def delete_epic_games_not_in(keep_ids):
+    """删除不在 keep_ids 中的游戏"""
+    if not keep_ids:
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        c = conn.cursor()
+        c.execute("DELETE FROM epic_games")
+        conn.commit()
+        conn.close()
+        return
+    placeholders = ','.join(['?'] * len(keep_ids))
+    conn = sqlite3.connect(DB_PATH, timeout=10)
+    c = conn.cursor()
+    c.execute(f"DELETE FROM epic_games WHERE game_id NOT IN ({placeholders})", tuple(keep_ids))
+    conn.commit()
+    conn.close()

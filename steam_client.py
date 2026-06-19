@@ -266,35 +266,67 @@ def refresh_games_library(steamid, api_key, steam_path=None, force=False, task_i
         if family_info:
             family_games = fetch_family_shared_games(api_key, family_info['family_groupid'])
 
+        # 1. 获取本地已有 appid 集合
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        c = conn.cursor()
+        c.execute("SELECT appid FROM games")
+        local_ids = {row[0] for row in c.fetchall()}
+        conn.close()
+
+        # 2. 构建远程游戏字典（去重，优先 owned）
         owned_appids = {g['appid'] for g in owned_games}
-        total = len(owned_games) + len([g for g in family_games if g['appid'] not in owned_appids])
+        remote_games = {}
+        for g in owned_games:
+            remote_games[g['appid']] = {
+                'name': g['name'],
+                'header_url': g['header_url'],
+                'type': 'owned'
+            }
+        for g in family_games:
+            appid = g['appid']
+            if appid not in remote_games:  # 如果 owned 已有，不覆盖
+                remote_games[appid] = {
+                    'name': g['name'],
+                    'header_url': g['header_url'],
+                    'type': 'shared'
+                }
+
+        remote_ids = set(remote_games.keys())
+        total = len(remote_ids)
         processed = 0
 
         if task_id:
-            task_manager.update_task(task_id, 50, f'开始写入数据库 (共 {total} 款)...')
+            task_manager.update_task(task_id, 50, f'开始同步 (共 {total} 款)...')
 
-        for game in owned_games:
-            upsert_game(game['appid'], game['name'], game['header_url'], now, 'owned')
+        # 3. 更新或插入远程游戏
+        for appid, game in remote_games.items():
+            upsert_game(appid, game['name'], game['header_url'], now, game['type'])
             processed += 1
             if task_id and processed % 10 == 0:
-                progress = 50 + int((processed / total) * 40)
+                progress = 10 + int((processed / total) * 40)
                 task_manager.update_task(task_id, min(progress, 90), f'已处理 {processed}/{total}')
 
-        for game in family_games:
-            if game['appid'] not in owned_appids:
-                upsert_game(game['appid'], game['name'], game['header_url'], now, 'shared')
-                processed += 1
-                if task_id and processed % 10 == 0:
-                    progress = 50 + int((processed / total) * 40)
-                    task_manager.update_task(task_id, min(progress, 90), f'已处理 {processed}/{total}')
+        # 4. 删除本地多余的游戏
+        to_delete = local_ids - remote_ids
+        if to_delete:
+            if task_id:
+                task_manager.update_task(task_id, 92, f'删除本地多余游戏 ({len(to_delete)} 款)')
+            placeholders = ','.join(['?'] * len(to_delete))
+            conn = sqlite3.connect(DB_PATH, timeout=10)
+            c = conn.cursor()
+            c.execute(f"DELETE FROM games WHERE appid IN ({placeholders})", tuple(to_delete))
+            conn.commit()
+            conn.close()
+            if task_id:
+                task_manager.update_task(task_id, 95, f'已删除 {len(to_delete)} 款游戏')
 
         if task_id:
-            task_manager.update_task(task_id, 95, '更新自定义列表...')
+            task_manager.update_task(task_id, 96, '更新自定义列表...')
         if steam_path:
             refresh_shelves_from_steam(steam_path, steamid)
 
         if task_id:
-            task_manager.update_task(task_id, 100, '同步完成')
+            task_manager.update_task(task_id, 100, f'同步完成 (保留 {total} 款，删除 {len(to_delete)} 款)')
             task_manager.finish_task(task_id)
         return True
     except Exception as e:
