@@ -107,3 +107,63 @@ def get_task_status(task_id):
     if not status:
         return jsonify({"error": "Task not found"}), 404
     return jsonify(status)
+
+@auth_bp.route('/alt/login')
+def api_alt_login():
+    return_to = request.url_root.rstrip('/') + '/api/alt/auth'
+    login_url = get_steam_login_url(return_to)
+    return jsonify({"login_url": login_url})
+
+@auth_bp.route('/alt/auth')
+def api_alt_auth():
+    callback_url = request.url
+    steamid = validate_steam_callback(callback_url)
+    if steamid:
+        session['steamid_alt'] = steamid
+        config['steamid_alt'] = steamid
+        save_config(config)
+        return redirect('/')
+    else:
+        return "登录失败", 400
+
+@auth_bp.route('/alt/status')
+def api_alt_status():
+    steamid = session.get('steamid_alt') or config.get('steamid_alt')
+    api_key = session.get('api_key_alt') or config.get('api_key_alt')
+    if steamid and api_key:
+        return jsonify({"logged_in": True, "steamid": steamid})
+    elif steamid:
+        return jsonify({"logged_in": False, "need_api_key": True})
+    else:
+        return jsonify({"logged_in": False})
+
+@auth_bp.route('/alt/set_api_key', methods=['POST'])
+def api_set_alt_api_key():
+    data = request.json
+    api_key = data.get('api_key')
+    if api_key:
+        session['api_key_alt'] = api_key
+        config['api_key_alt'] = api_key
+        save_config(config)
+        return jsonify({"success": True})
+    return jsonify({"success": False}), 400
+
+@auth_bp.route('/alt/init_library', methods=['POST'])
+def api_init_alt_library():
+    steamid = session.get('steamid_alt') or config.get('steamid_alt')
+    api_key = session.get('api_key_alt') or config.get('api_key_alt')
+    if not steamid or not api_key:
+        return jsonify({"success": False, "error": "Missing credentials"}), 400
+
+    task_id = str(uuid.uuid4())
+    task_manager.create_task(task_id, 100)
+
+    def run_sync():
+        from steam_client import refresh_games_library_alt
+        refresh_games_library_alt(steamid, api_key, force=True, task_id=task_id)
+
+    thread = threading.Thread(target=run_sync)
+    thread.daemon = True
+    thread.start()
+
+    return jsonify({"task_id": task_id})

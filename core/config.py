@@ -9,6 +9,8 @@ def load_config():
         "steamid": None,
         "api_key": None,
         "steam_path": None,
+        "steamid_alt": None,
+        "api_key_alt": None,
         "epic_client_id": "",
         "epic_client_secret": "",
     }

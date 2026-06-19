@@ -66,8 +66,12 @@ function appendGames(games) {
         const iconHtml = iconUrl ? `<img src="${iconUrl}" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">` : '';
 
         let badgeHtml = '';
-        if (currentPlatform.id === 'steam' && game.type === 'shared') {
-            badgeHtml = `<div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #ffd700; font-size: 11px; padding: 2px 6px; border-radius: 20px; z-index: 10; backdrop-filter: blur(2px);">🏠 家庭库</div>`;
+        if (currentPlatform.id === 'steam') {
+            if (game.type === 'shared') {
+                badgeHtml = `<div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #ffd700; font-size: 11px; padding: 2px 6px; border-radius: 20px; z-index: 10; backdrop-filter: blur(2px);">🏠 家庭库</div>`;
+            } else if (game.type === 'alt') {
+                badgeHtml = `<div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #66c0f4; font-size: 11px; padding: 2px 6px; border-radius: 20px; z-index: 10; backdrop-filter: blur(2px);">👤 副号</div>`;
+            }
         }
 
         let actionsHtml = '';

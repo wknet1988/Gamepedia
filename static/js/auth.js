@@ -98,6 +98,73 @@ async function updateAuthStatus() {
     }
 }
 
+// ---- Steam 副号 ----
+document.getElementById('auth-steam-alt-login')?.addEventListener('click', async () => {
+    try {
+        const resp = await fetch('/api/alt/login');
+        const data = await resp.json();
+        if (data.login_url) {
+            window.open(data.login_url, '_blank');
+        } else {
+            alert('无法获取登录链接');
+        }
+    } catch (err) {
+        console.error('Steam 副号登录失败', err);
+        alert('网络错误，请重试');
+    }
+});
+
+document.getElementById('auth-steam-alt-save-api')?.addEventListener('click', async () => {
+    const apiKey = document.getElementById('auth-steam-alt-api-key').value.trim();
+    if (!apiKey) { alert('请输入 API Key'); return; }
+    const resp = await fetch('/api/alt/set_api_key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: apiKey })
+    });
+    const data = await resp.json();
+    if (data.success) {
+        alert('副号 API Key 保存成功！');
+        updateAuthStatus();
+    } else {
+        alert('保存失败');
+    }
+});
+
+document.getElementById('auth-steam-alt-sync')?.addEventListener('click', async () => {
+    const resp = await fetch('/api/alt/init_library', { method: 'POST' });
+    const data = await resp.json();
+    if (data.task_id) {
+        showSyncProgress(data.task_id);
+    } else if (data.success) {
+        alert('副号同步已触发（无进度跟踪）');
+        updateAuthStatus();
+    } else {
+        alert('同步失败：' + (data.error || '未知错误'));
+    }
+});
+
+// 更新状态时增加副号
+async function updateAuthStatus() {
+    // ... 原有代码 ...
+    // Steam 副号
+    try {
+        const resp = await fetch('/api/alt/status');
+        const data = await resp.json();
+        const statusEl = document.getElementById('steam-alt-status');
+        if (data.logged_in) {
+            statusEl.innerText = `✅ ${t.auth_logged_in} (${data.steamid})`;
+            statusEl.style.color = '#6f6';
+        } else if (data.need_api_key) {
+            statusEl.innerText = `⏳ ${t.auth_not_logged_in} (需要 API Key)`;
+            statusEl.style.color = '#ffa';
+        } else {
+            statusEl.innerText = `❌ ${t.auth_not_logged_in}`;
+            statusEl.style.color = '#f66';
+        }
+    } catch(e) { console.error(e); }
+}
+
 // ---- 授权管理按钮事件 ----
 document.getElementById('auth-steam-save-api')?.addEventListener('click', async () => {
     const apiKey = document.getElementById('auth-steam-api-key').value.trim();

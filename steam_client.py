@@ -337,3 +337,83 @@ def refresh_games_library(steamid, api_key, steam_path=None, force=False, task_i
         import traceback
         traceback.print_exc()
         return False
+    
+def refresh_games_library_alt(steamid, api_key, force=False, task_id=None):
+    """同步副号 Steam 游戏库，标记为 alt"""
+    if not steamid or not api_key:
+        return False
+
+    if task_id:
+        from core.task_manager import task_manager
+        task_manager.update_task(task_id, 5, '检查副号数据库...')
+
+    # 完全复用主号逻辑，但 game_type 为 'alt'
+    conn = sqlite3.connect(DB_PATH, timeout=10)
+    c = conn.cursor()
+    c.execute("SELECT MAX(last_updated) FROM games WHERE type = 'alt'")
+    row = c.fetchone()
+    last = row[0] if row[0] else 0
+    conn.close()
+
+    now = int(time.time())
+    if not force and (now - last) < 86400:
+        if task_id:
+            task_manager.update_task(task_id, 100, '副号已是最新，无需同步')
+            task_manager.finish_task(task_id)
+        return True
+
+    try:
+        if task_id:
+            task_manager.update_task(task_id, 10, '获取副号游戏列表...')
+        owned_games = fetch_owned_games(api_key, steamid)
+
+        # 获取本地已有 appid（只考虑主号和副号，避免重复）
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        c = conn.cursor()
+        c.execute("SELECT appid FROM games WHERE type IN ('owned', 'alt')")
+        local_ids = {row[0] for row in c.fetchall()}
+        conn.close()
+
+        remote_ids = {g['appid'] for g in owned_games}
+        total = len(remote_ids)
+        processed = 0
+
+        if task_id:
+            task_manager.update_task(task_id, 50, f'开始同步副号 (共 {total} 款)...')
+
+        for game in owned_games:
+            # 如果已存在（主号或副号），更新名称和封面，但不改变类型（若为 owned 则保留）
+            # 但为了简化，这里直接 upsert 并标记为 alt（若已为主号，则跳过？）
+            # 我们策略：副号游戏始终标记为 alt，即使主号也有，也会覆盖为 alt？
+            # 更合理：如果已存在且类型为 owned，则保留 owned，不覆盖。
+            # 但是主号和副号可能有相同游戏，我们想保留主号的 owned 状态，副号的不覆盖。
+            # 因此先检查是否存在，若存在且 type='owned' 则跳过，否则插入或更新。
+            conn = sqlite3.connect(DB_PATH, timeout=10)
+            c = conn.cursor()
+            c.execute("SELECT type FROM games WHERE appid = ?", (game['appid'],))
+            row = c.fetchone()
+            if row and row[0] == 'owned':
+                # 主号已有，跳过副号
+                conn.close()
+                processed += 1
+                continue
+            # 否则 upsert 为 alt
+            upsert_game(game['appid'], game['name'], game['header_url'], now, 'alt')
+            conn.close()
+            processed += 1
+            if task_id and processed % 10 == 0:
+                progress = 50 + int((processed / total) * 40)
+                task_manager.update_task(task_id, min(progress, 90), f'已处理 {processed}/{total}')
+
+        if task_id:
+            task_manager.update_task(task_id, 95, '副号同步完成')
+            task_manager.finish_task(task_id)
+        return True
+    except Exception as e:
+        if task_id:
+            task_manager.update_task(task_id, 100, f'副号同步失败: {str(e)}')
+            task_manager.finish_task(task_id, str(e))
+        print(f"副号同步失败: {e}")
+        import traceback
+        traceback.print_exc()
+        return False

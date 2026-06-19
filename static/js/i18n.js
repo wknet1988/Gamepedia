@@ -66,6 +66,7 @@ const i18n = {
         alipay: '支付宝',
         wechat_pay: '微信支付',
         paypal: 'PayPal 贝宝',
+        steam_alt: 'Steam 副号',
     },
     en: {
         app_name: 'Gamepedia',
@@ -133,6 +134,7 @@ const i18n = {
         alipay: 'Alipay',
         wechat_pay: 'WeChat Pay',
         paypal: 'PayPal',
+        steam_alt: 'Steam (alt)',
     }
 };
 
