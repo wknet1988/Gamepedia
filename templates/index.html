@@ -30,7 +30,7 @@
                 <button id="settings-btn" data-i18n="settings">⚙️ 设置</button>
             </div>
             <div style="margin-top: 20px; text-align: center;">
-                <button id="sponsor-btn" style="background: #e6b422; color: #2c1a0c; padding: 6px 16px; border-radius: 30px; font-weight: bold;">❤️ 赞助</button>
+                <button id="donate-btn" data-i18n="donate" style="background: #ffd700; color: #2c1a0c;">❤️ 赞助</button>
             </div>
         </div>
         <div class="main">
@@ -127,17 +127,18 @@
 </div>
 
 <!-- 赞助模态框 -->
-<div id="sponsor-modal" class="modal" style="display:none;">
+<div id="donate-modal" class="modal" style="display:none;">
     <div class="modal-content" style="max-width: 600px;">
-        <span class="close-sponsor-modal">&times;</span>
-        <h3 data-i18n="sponsor_title">☕ 赞助支持</h3>
-        <p data-i18n="sponsor_desc">如果您觉得本项目有帮助，欢迎赞助以支持持续开发！</p>
+        <span class="close-donate-modal">&times;</span>
+        <h3 data-i18n="donate_title">☕ 赞助支持</h3>
+        <p data-i18n="donate_desc">如果您觉得本项目有帮助，欢迎赞助以支持持续开发！</p>
+        <!-- 支付方式内容保持不变 -->
         <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px;">
             <!-- Alipay -->
             <div style="text-align: center; margin: 10px;">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
                     <img src="/static/images/alipay.ico" alt="Alipay" style="width: 24px; height: 24px;">
-                    <span style="font-weight: bold;">支付宝</span>
+                    <span style="font-weight: bold;" data-i18n="alipay">支付宝</span>
                 </div>
                 <img src="/static/images/alipay.png" alt="Alipay QR" style="width: 180px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
             </div>
@@ -145,7 +146,7 @@
             <div style="text-align: center; margin: 10px;">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
                     <img src="/static/images/wechat.ico" alt="WeChat Pay" style="width: 24px; height: 24px;">
-                    <span style="font-weight: bold;">微信支付</span>
+                    <span style="font-weight: bold;" data-i18n="wechat_pay">微信支付</span>
                 </div>
                 <img src="/static/images/wechat.png" alt="WeChat QR" style="width: 180px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
             </div>
@@ -153,12 +154,12 @@
             <div style="text-align: center; margin: 10px;">
                 <a href="https://www.paypal.me/wknet1988" target="_blank" style="display: inline-block; padding: 10px 24px; background: #0070ba; color: white; border-radius: 30px; text-decoration: none; font-weight: bold;">
                     <img src="/static/images/paypal.ico" alt="PayPal" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
-                    PayPal
+                    <span data-i18n="paypal">PayPal</span>
                 </a>
             </div>
         </div>
         <div style="margin-top: 20px; font-size: 12px; color: #888;">
-            <span data-i18n="sponsor_thanks">感谢您的支持！</span>
+            <span data-i18n="donate_thanks">感谢您的支持！</span>
         </div>
     </div>
 </div>
