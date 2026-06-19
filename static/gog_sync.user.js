@@ -1,8 +1,10 @@
 // ==UserScript==
-// @name         GOG 游戏库同步到游戏藏经阁
+// @name         GOG Sync to Gamepedia
+// @name-zh      GOG 同步到游戏藏经阁
 // @namespace    http://localhost:5000
-// @version      2.0
-// @description  从 GOG 账户页面抓取游戏列表并同步到本地游戏藏经阁
+// @version      2.1
+// @description  Fetch GOG library and sync to Gamepedia
+// @description-zh  从 GOG 账户页面抓取游戏列表并同步到本地游戏藏经阁
 // @author       Gamepedia
 // @match        https://www.gog.com/account*
 // @grant        GM_xmlhttpRequest
@@ -13,11 +15,40 @@
 (function() {
     'use strict';
 
+    // ==================== 国际化配置 ====================
+    const i18n = {
+        zh: {
+            sync_btn: '📀 同步到游戏藏经阁',
+            sync_btn_syncing: '同步中...',
+            no_games: '未获取到游戏，请确认已登录并访问“我的游戏”页面',
+            sync_success: (count) => `同步成功！共 ${count} 款游戏`,
+            sync_failed: (error) => `同步失败：${error || '未知错误'}`,
+            network_error: '网络错误，请确保本地游戏藏经阁服务已启动 (http://localhost:5000)',
+            fetch_failed: '抓取游戏失败：',
+            invalid_response: '服务器返回无效响应'
+        },
+        en: {
+            sync_btn: '📀 Sync to Gamepedia',
+            sync_btn_syncing: 'Syncing...',
+            no_games: 'No games found. Please ensure you are logged in and on the "My Games" page.',
+            sync_success: (count) => `Sync successful! ${count} games`,
+            sync_failed: (error) => `Sync failed: ${error || 'Unknown error'}`,
+            network_error: 'Network error. Please ensure Gamepedia service is running (http://localhost:5000)',
+            fetch_failed: 'Failed to fetch games: ',
+            invalid_response: 'Invalid response from server'
+        }
+    };
+
+    // 检测浏览器语言
+    const userLang = (navigator.language && navigator.language.startsWith('zh')) ? 'zh' : 'en';
+    const t = i18n[userLang];
+
     const API_URL = 'http://localhost:5000/api/gog/sync_from_extension';
 
+    // ==================== 添加同步按钮 ====================
     function addSyncButton() {
         const btn = document.createElement('button');
-        btn.innerText = '📀 同步到游戏藏经阁';
+        btn.innerText = t.sync_btn;
         btn.style.position = 'fixed';
         btn.style.bottom = '20px';
         btn.style.right = '20px';
@@ -38,6 +69,7 @@
         return btn;
     }
 
+    // ==================== 抓取游戏数据 ====================
     async function fetchGogGames() {
         const allProducts = [];
         let page = 1;
@@ -68,15 +100,16 @@
         }));
     }
 
+    // ==================== 主逻辑 ====================
     const btn = addSyncButton();
 
     btn.onclick = async () => {
         btn.disabled = true;
-        btn.innerText = '同步中...';
+        btn.innerText = t.sync_btn_syncing;
         try {
             const games = await fetchGogGames();
             if (!games.length) {
-                alert('未找到游戏，请确保已登录 GOG 账号并访问“我的游戏”页面');
+                alert(t.no_games);
                 return;
             }
             GM_xmlhttpRequest({
@@ -88,23 +121,24 @@
                     try {
                         const data = JSON.parse(resp.responseText);
                         if (data.success) {
-                            alert(`同步成功！共 ${data.count} 款游戏`);
+                            alert(t.sync_success(data.count));
                         } else {
-                            alert('同步失败：' + (data.error || '未知错误'));
+                            alert(t.sync_failed(data.error));
                         }
                     } catch(e) {
-                        alert('同步失败：服务器返回无效响应');
+                        alert(t.sync_failed(t.invalid_response));
                     }
                 },
                 onerror: function() {
-                    alert('网络错误，请确保本地游戏藏经阁服务已启动 (http://localhost:5000)');
+                    alert(t.network_error);
                 }
             });
         } catch(err) {
-            alert('抓取游戏失败：' + err.message);
+            alert(t.fetch_failed + err.message);
+            console.error('[GOG Sync] 错误:', err);
         } finally {
             btn.disabled = false;
-            btn.innerText = '📀 同步到游戏藏经阁';
+            btn.innerText = t.sync_btn;
         }
     };
 })();

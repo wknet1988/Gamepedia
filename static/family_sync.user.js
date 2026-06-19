@@ -1,8 +1,10 @@
 // ==UserScript==
 // @name         Steam Family Sync to Gamepedia
+// @name-zh      Steam 家庭库同步到游戏藏经阁
 // @namespace    http://localhost:5000
 // @version      1.2.1
-// @description  将 Steam 家庭库游戏同步到本地游戏藏经阁服务端 | Sync Steam family library to local Gamepedia
+// @description  Fetch Steam family library and sync to Gamepedia
+// @description-zh  从 Steam 家庭库同步游戏列表到本地游戏藏经阁
 // @author       Gamepedia
 // @match        https://store.steampowered.com/account/*
 // @grant        GM_xmlhttpRequest
