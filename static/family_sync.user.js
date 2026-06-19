@@ -2,7 +2,7 @@
 // @name         Steam Family Sync to Gamepedia
 // @name-zh      Steam 家庭库同步到GP游戏收藏馆
 // @namespace    http://localhost:5000
-// @version      1.2.2
+// @version      1.2.3
 // @description  Fetch Steam family library and sync to Gamepedia
 // @description-zh  从 Steam 家庭库同步游戏列表到本地 GP 游戏收藏馆
 // @author       Gamepedia
@@ -19,6 +19,7 @@
     const i18n = {
         zh: {
             sync_btn: '📀 同步到GP游戏收藏馆',
+            sync_btn_syncing: '同步中...',
             login_error: '无法获取登录信息，请确保已登录 Steam 商店',
             sync_success: (family_name, count) => `同步成功！家庭组：${family_name}，共 ${count} 款游戏`,
             sync_failed: (error) => `同步失败：${error || '未知错误'}`,
@@ -26,6 +27,7 @@
         },
         en: {
             sync_btn: '📀 Sync to Gamepedia',
+            sync_btn_syncing: 'Syncing...',
             login_error: 'Failed to get login info, please ensure you are logged into Steam Store',
             sync_success: (family_name, count) => `Sync successful! Family group: ${family_name}, ${count} games`,
             sync_failed: (error) => `Sync failed: ${error || 'Unknown error'}`,
@@ -63,6 +65,12 @@
             alert(t.login_error);
             return;
         }
+
+        // 禁用按钮并显示同步中
+        btn.disabled = true;
+        btn.innerText = t.sync_btn_syncing;
+        btn.style.opacity = '0.7';
+
         GM_xmlhttpRequest({
             method: 'POST',
             url: API_URL,
@@ -82,9 +90,16 @@
                 } catch(e) {
                     alert(t.sync_failed('Invalid response'));
                 }
+                // 恢复按钮
+                btn.disabled = false;
+                btn.innerText = t.sync_btn;
+                btn.style.opacity = '0.35';
             },
             onerror: function() {
                 alert(t.network_error);
+                btn.disabled = false;
+                btn.innerText = t.sync_btn;
+                btn.style.opacity = '0.35';
             }
         });
     }
@@ -103,11 +118,10 @@
     btn.style.cursor = 'pointer';
     btn.style.fontWeight = 'bold';
     btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
-    btn.style.opacity = '0.35';          // 默认半透明，自动隐藏感
-    btn.style.transition = 'opacity 0.2s ease'; // 平滑过渡
+    btn.style.opacity = '0.35';
+    btn.style.transition = 'opacity 0.2s ease';
     btn.style.backdropFilter = 'blur(2px)';
 
-    // 鼠标悬停时完全不透明，移开恢复半透明
     btn.addEventListener('mouseenter', () => { btn.style.opacity = '1'; });
     btn.addEventListener('mouseleave', () => { btn.style.opacity = '0.35'; });
 

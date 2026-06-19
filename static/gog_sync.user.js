@@ -2,7 +2,7 @@
 // @name         GOG Sync to Gamepedia
 // @name-zh      GOG 同步到GP游戏收藏馆
 // @namespace    http://localhost:5000
-// @version      2.1.1
+// @version      2.1.2
 // @description  Fetch GOG library and sync to Gamepedia
 // @description-zh  从 GOG 账户页面抓取游戏列表并同步到本地GP游戏收藏馆
 // @author       Gamepedia
@@ -103,13 +103,17 @@
     // ==================== 主逻辑 ====================
     const btn = addSyncButton();
 
-    btn.onclick = async () => {
+    btn.onclick = async function() {
+        // 禁用按钮并显示同步中
         btn.disabled = true;
         btn.innerText = t.sync_btn_syncing;
+
         try {
             const games = await fetchGogGames();
             if (!games.length) {
                 alert(t.no_games);
+                btn.disabled = false;
+                btn.innerText = t.sync_btn;
                 return;
             }
             GM_xmlhttpRequest({
@@ -128,15 +132,19 @@
                     } catch(e) {
                         alert(t.sync_failed(t.invalid_response));
                     }
+                    // 恢复按钮
+                    btn.disabled = false;
+                    btn.innerText = t.sync_btn;
                 },
                 onerror: function() {
                     alert(t.network_error);
+                    btn.disabled = false;
+                    btn.innerText = t.sync_btn;
                 }
             });
         } catch(err) {
             alert(t.fetch_failed + err.message);
             console.error('[GOG Sync] 错误:', err);
-        } finally {
             btn.disabled = false;
             btn.innerText = t.sync_btn;
         }

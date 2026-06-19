@@ -2,7 +2,7 @@
 // @name         Cubejoy Sync to Gamepedia
 // @name-zh      方块游戏库同步到GP游戏收藏馆
 // @namespace    http://localhost:5000
-// @version      2.0
+// @version      2.0.1
 // @description  Fetch Cubejoy library and sync to Gamepedia
 // @description-zh  从方块游戏平台同步游戏列表到本地GP游戏收藏馆
 // @author       Gamepedia
@@ -136,13 +136,17 @@
     // ==================== 主逻辑 ====================
     const btn = addSyncButton();
 
-    btn.onclick = async () => {
+    btn.onclick = async function() {
+        // 禁用按钮并显示同步中
         btn.disabled = true;
         btn.innerText = t.sync_btn_syncing;
+
         try {
             const games = await fetchAllGames();
             if (!games.length) {
                 alert(t.no_games);
+                btn.disabled = false;
+                btn.innerText = t.sync_btn;
                 return;
             }
             const formatted = games.map(g => ({
@@ -167,15 +171,19 @@
                     } catch(e) {
                         alert(t.sync_failed(t.invalid_response));
                     }
+                    // 恢复按钮
+                    btn.disabled = false;
+                    btn.innerText = t.sync_btn;
                 },
                 onerror: function() {
                     alert(t.network_error);
+                    btn.disabled = false;
+                    btn.innerText = t.sync_btn;
                 }
             });
         } catch(err) {
             alert(t.fetch_failed + err.message);
             console.error('[Cubejoy] 同步错误:', err);
-        } finally {
             btn.disabled = false;
             btn.innerText = t.sync_btn;
         }
