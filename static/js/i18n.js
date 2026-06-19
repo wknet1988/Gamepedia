@@ -1,0 +1,140 @@
+// ==================== 国际化配置 ====================
+const i18n = {
+    zh: {
+        app_name: '游戏藏经阁',
+        shelf_header: '📀 游戏藏经阁',
+        login: '登录 Steam',
+        settings: '⚙️ 设置',
+        search: '🔍 搜索',
+        search_placeholder: '搜索游戏名称...',
+        settings_title: '⚙️ 设置',
+        api_key_label: 'Steam Web API Key：',
+        api_key_placeholder: '粘贴您的 API Key',
+        api_key_link: '点击申请 API Key',
+        save_api_key: '保存 API Key',
+        refresh_library: '🔄 刷新游戏库',
+        refresh_hint: '从 Steam 重新拉取所有游戏和封面',
+        bg_label: '🎨 自定义背景图（平铺显示）：',
+        clear_bg: '移除背景',
+        bg_hint: '提示：上传的图片会以平铺方式作为背景。',
+        steam_path_title: '请指定 Steam 安装路径',
+        steam_path_desc: '为了读取您的游戏自定义列表，需要知道 Steam 安装目录。\n例如：D:\\Steam 或 C:\\Program Files (x86)\\Steam',
+        steam_path_placeholder: 'Steam 安装路径',
+        save_path: '保存路径',
+        loading: '加载中...',
+        no_games: '没有找到游戏',
+        search_result_prefix: '搜索结果：“',
+        search_result_suffix: '”',
+        run: '运行',
+        loading_more: '加载更多...',
+        counter_text: '已加载 {loaded} / {total} 个游戏',
+        epic_login: '登录 Epic 账号',
+        epic_sync: '🔄 同步 Epic 游戏',
+        epic_status: 'Epic 状态：',
+        not_logged_in: '未登录',
+        auth_management: '🔑 授权管理',
+        auth_platform: '平台',
+        auth_status: '状态',
+        auth_action: '操作',
+        auth_detecting: '检测中',
+        auth_logged_in: '已登录',
+        auth_not_logged_in: '未登录',
+        auth_steam: 'Steam',
+        auth_steam_family: 'Steam 家庭组',
+        auth_epic: 'Epic Games',
+        auth_gog: 'GOG',
+        auth_cubejoy: 'Cubejoy 方块',
+        auth_save: '保存',
+        auth_login: '登录',
+        auth_sync: '同步',
+        auth_get_code: '获取授权码',
+        auth_submit: '提交',
+        auth_install_script: '安装脚本',
+        auth_open_store: '打开游戏库',
+        auth_family_script: '请使用油猴脚本同步',
+        auth_family_sync: '已同步',
+        auth_family_unsynced: '未同步',
+        auth_family_count: '({count} 款共享)',
+        auth_gog_script: '脚本同步',
+        auth_epic_code_placeholder: '授权码',
+    },
+    en: {
+        app_name: 'Gamepedia',
+        shelf_header: '📀 Gamepedia',
+        login: 'Login with Steam',
+        settings: '⚙️ Settings',
+        search: '🔍 Search',
+        search_placeholder: 'Search game name...',
+        settings_title: '⚙️ Settings',
+        api_key_label: 'Steam Web API Key:',
+        api_key_placeholder: 'Paste your API Key',
+        api_key_link: 'Click here to get API Key',
+        save_api_key: 'Save API Key',
+        refresh_library: '🔄 Refresh Library',
+        refresh_hint: 'Re-download all games and covers from Steam',
+        bg_label: '🎨 Custom Background (tiled):',
+        clear_bg: 'Remove Background',
+        bg_hint: 'Upload an image to use as tiled background.',
+        steam_path_title: 'Specify Steam Installation Path',
+        steam_path_desc: 'To read your custom game lists, we need your Steam directory.\nE.g., D:\\Steam or C:\\Program Files (x86)\\Steam',
+        steam_path_placeholder: 'Steam installation path',
+        save_path: 'Save Path',
+        loading: 'Loading...',
+        no_games: 'No games found',
+        search_result_prefix: 'Search results: “',
+        search_result_suffix: '”',
+        run: 'Run',
+        loading_more: 'Loading more...',
+        counter_text: '{loaded} of {total} games',
+        epic_login: 'Login with Epic',
+        epic_sync: '🔄 Sync Epic Games',
+        epic_status: 'Epic status: ',
+        not_logged_in: 'Not logged in',
+        auth_management: '🔑 Auth Manager',
+        auth_platform: 'Platform',
+        auth_status: 'Status',
+        auth_action: 'Action',
+        auth_detecting: 'Detecting...',
+        auth_logged_in: 'Logged in',
+        auth_not_logged_in: 'Not logged in',
+        auth_steam: 'Steam',
+        auth_steam_family: 'Steam Family',
+        auth_epic: 'Epic Games',
+        auth_gog: 'GOG',
+        auth_cubejoy: 'Cubejoy',
+        auth_save: 'Save',
+        auth_login: 'Login',
+        auth_sync: 'Sync',
+        auth_get_code: 'Get Auth Code',
+        auth_submit: 'Submit',
+        auth_install_script: 'Install Script',
+        auth_open_store: 'Open Library',
+        auth_family_script: 'Please use userscript to sync',
+        auth_family_sync: 'Synced',
+        auth_family_unsynced: 'Not synced',
+        auth_family_count: '({count} shared)',
+        auth_gog_script: 'Script Sync',
+        auth_epic_code_placeholder: 'Auth Code',
+    }
+};
+
+let userLang = (navigator.language && navigator.language.startsWith('zh')) ? 'zh' : 'en';
+const t = i18n[userLang];
+
+function applyI18n() {
+    document.title = t.app_name;
+    const appNameEl = document.getElementById('app-name');
+    if (appNameEl) appNameEl.innerText = t.app_name;
+    const shelfTitleEl = document.getElementById('shelf-title');
+    if (shelfTitleEl) shelfTitleEl.innerText = t.shelf_header;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.innerText = t[key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (t[key]) el.placeholder = t[key];
+    });
+    const loadingEl = document.getElementById('loading');
+    if (loadingEl && t.loading) loadingEl.innerText = t.loading;
+}
