@@ -25,6 +25,11 @@ def async_download(url, platform, game_id):
 @images_bp.route('/steam/<int:appid>.jpg')
 def steam_image(appid):
     local_path = get_platform_image_path('steam', str(appid))
+    # 如果存在但无效，删除
+    if local_path.exists() and not is_image_valid(local_path):
+        local_path.unlink()
+        print(f"检测到无效的 Steam 缓存，已删除: {local_path}")
+
     if not local_path.exists():
         conn = sqlite3.connect('steam_games.db')
         c = conn.cursor()
@@ -44,6 +49,10 @@ def steam_image(appid):
 @images_bp.route('/epic/<game_id>.jpg')
 def epic_image(game_id):
     local_path = get_platform_image_path('epic', game_id)
+    # 如果存在但无效，删除
+    if local_path.exists() and not is_image_valid(local_path):
+        local_path.unlink()
+        print(f"检测到无效的 Epic 缓存，已删除: {local_path}")
     if not local_path.exists():
         conn = sqlite3.connect('epic_games.db')
         c = conn.cursor()
@@ -63,6 +72,10 @@ def epic_image(game_id):
 @images_bp.route('/gog/<game_id>.jpg')
 def gog_image(game_id):
     local_path = get_platform_image_path('gog', game_id)
+    # 如果存在但无效，删除
+    if local_path.exists() and not is_image_valid(local_path):
+        local_path.unlink()
+        print(f"检测到无效的 GOG 缓存，已删除: {local_path}")
     if not local_path.exists():
         conn = sqlite3.connect('gog_games.db')
         c = conn.cursor()
@@ -82,6 +95,10 @@ def gog_image(game_id):
 @images_bp.route('/cubejoy/<game_id>.jpg')
 def cubejoy_image(game_id):
     local_path = get_platform_image_path('cubejoy', game_id)
+    # 如果存在但无效，删除
+    if local_path.exists() and not is_image_valid(local_path):
+        local_path.unlink()
+        print(f"检测到无效的 CubeJoy 缓存，已删除: {local_path}")
     if not local_path.exists():
         conn = sqlite3.connect('cubejoy_games.db')
         c = conn.cursor()
