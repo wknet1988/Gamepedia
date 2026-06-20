@@ -47,7 +47,8 @@ function appendGames(games) {
             storeUrl = `https://store.epicgames.com/browse?q=${searchQuery}`;
         } else if (currentPlatform.id === 'gog') {
             const searchQuery = encodeURIComponent(game.name);
-            storeUrl = `https://www.gog.com/zh/games?query=${searchQuery}`;
+            const langPath = userLang === 'zh' ? 'zh' : 'en';  // 根据界面语言
+            storeUrl = `https://www.gog.com/${langPath}/games?query=${searchQuery}`;
         } else if (currentPlatform.id === 'cubejoy') {
             const sId = game.s_id || '';
             storeUrl = `https://store.cubejoy.com/html/en/store/goodsdetail/detail${sId}.html`;
@@ -68,9 +69,9 @@ function appendGames(games) {
         let badgeHtml = '';
         if (currentPlatform.id === 'steam') {
             if (game.type === 'shared') {
-                badgeHtml = `<div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #ffd700; font-size: 11px; padding: 2px 6px; border-radius: 20px; z-index: 10; backdrop-filter: blur(2px);">🏠 家庭库</div>`;
+                badgeHtml = `<div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #ffd700; font-size: 11px; padding: 2px 6px; border-radius: 20px; z-index: 10; backdrop-filter: blur(2px);">${t.badge_family}</div>`;
             } else if (game.type === 'alt') {
-                badgeHtml = `<div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #66c0f4; font-size: 11px; padding: 2px 6px; border-radius: 20px; z-index: 10; backdrop-filter: blur(2px);">👤 副号</div>`;
+                badgeHtml = `<div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #66c0f4; font-size: 11px; padding: 2px 6px; border-radius: 20px; z-index: 10; backdrop-filter: blur(2px);">${t.badge_alt}</div>`;
             }
         }
 
