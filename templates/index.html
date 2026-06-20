@@ -31,6 +31,9 @@
                 <button id="auth-btn" data-i18n="auth_management" style="margin-bottom: 10px;">🔑 授权管理</button>
                 <button id="settings-btn" data-i18n="settings">⚙️ 设置</button>
             </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button id="help-btn" data-i18n="help" style="background: #2a4a6a; color: white;">❓ 帮助</button>
+            </div>
             <div style="margin-top: 20px; text-align: center;">
                 <button id="sponsor-btn" data-i18n="sponsor" style="background: #ffd700; color: #2c1a0c;">❤️ 赞助</button>
             </div>
@@ -280,6 +283,17 @@
             <button id="sync-progress-close" style="display:none;" onclick="closeSyncProgress()">关闭</button>
         </div>
     </div>
+
+    <!-- 帮助模态框 -->
+<div id="help-modal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width: 720px; position: relative; max-height: 85vh; overflow-y: auto;">
+        <span class="close-help-modal" style="position: absolute; top: 12px; right: 16px; font-size: 28px; font-weight: bold; cursor: pointer; color: #c79a2e;">&times;</span>
+        <h3 data-i18n="help_title">❓ 帮助中心</h3>
+        <div id="help-content" style="margin-top: 20px;">
+            <!-- 由 JS 动态生成 -->
+        </div>
+    </div>
+</div>
 
     <!-- 回到顶部按钮 -->
     <button id="back-to-top"

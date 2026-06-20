@@ -252,6 +252,63 @@ function restoreSyncProgress() {
     }
 }
 
+// ==================== 帮助模块 ====================
+const helpModal = document.getElementById('help-modal');
+const helpBtn = document.getElementById('help-btn');
+const closeHelpBtn = document.querySelector('.close-help-modal');
+
+function renderHelpContent() {
+    const container = document.getElementById('help-content');
+    if (!container) return;
+    container.innerHTML = `
+        <div style="margin-bottom: 16px;">
+            <details>
+                <summary style="cursor:pointer; font-weight:bold; font-size:16px; color:#66c0f4;">${t.help_q1}</summary>
+                <p style="margin-top:10px; line-height:1.6;">${t.help_a1}</p>
+            </details>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <details>
+                <summary style="cursor:pointer; font-weight:bold; font-size:16px; color:#66c0f4;">${t.help_q2}</summary>
+                <p style="margin-top:10px; line-height:1.6;">${t.help_a2}</p>
+            </details>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <details>
+                <summary style="cursor:pointer; font-weight:bold; font-size:16px; color:#66c0f4;">${t.help_q3}</summary>
+                <p style="margin-top:10px; line-height:1.6;">${t.help_a3}</p>
+            </details>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <details>
+                <summary style="cursor:pointer; font-weight:bold; font-size:16px; color:#66c0f4;">${t.help_q4}</summary>
+                <p style="margin-top:10px; line-height:1.6;">${t.help_a4}</p>
+            </details>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <details>
+                <summary style="cursor:pointer; font-weight:bold; font-size:16px; color:#66c0f4;">${t.help_q5}</summary>
+                <p style="margin-top:10px; line-height:1.6;">${t.help_a5}</p>
+            </details>
+        </div>
+    `;
+}
+
+helpBtn?.addEventListener('click', () => {
+    renderHelpContent();
+    helpModal.style.display = 'block';
+});
+
+closeHelpBtn?.addEventListener('click', () => {
+    helpModal.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === helpModal) {
+        helpModal.style.display = 'none';
+    }
+});
+
 // 在页面初始化时调用
 document.addEventListener('DOMContentLoaded', () => {
     restoreSyncProgress();

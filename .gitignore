@@ -21,3 +21,5 @@ blueprints/__pycache__/games.cpython-310.pyc
 blueprints/__pycache__/gog.cpython-310.pyc
 blueprints/__pycache__/images.cpython-310.pyc
 blueprints/__pycache__/platform.cpython-310.pyc
+core/__pycache__/__init__.cpython-310.pyc
+core/__pycache__/cache.cpython-310.pyc
