@@ -67,6 +67,11 @@ const i18n = {
         wechat_pay: '微信支付',
         paypal: 'PayPal 贝宝',
         steam_alt: 'Steam 副号',
+        sync_preparing: '准备中...',
+        sync_processing: (processed, total) => `已处理 ${processed}/${total}`,
+        sync_complete: '✅ 同步完成！',
+        sync_failed: (error) => `❌ 同步失败: ${error}`,
+        sync_error: '❌ 错误: ',
     },
     en: {
         app_name: 'Gamepedia',
@@ -135,6 +140,11 @@ const i18n = {
         wechat_pay: 'WeChat Pay',
         paypal: 'PayPal',
         steam_alt: 'Steam (alt)',
+        sync_preparing: 'Preparing...',
+        sync_processing: (processed, total) => `Processed ${processed}/${total}`,
+        sync_complete: '✅ Sync complete!',
+        sync_failed: (error) => `❌ Sync failed: ${error}`,
+        sync_error: '❌ Error: ',
     }
 };
 

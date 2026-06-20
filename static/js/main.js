@@ -186,7 +186,6 @@ let syncPollingInterval = null;
 const SYNC_TASK_KEY = 'sync_task_id';
 
 function showSyncProgress(taskId) {
-    // 保存 taskId 到 localStorage，以便刷新后恢复
     localStorage.setItem(SYNC_TASK_KEY, taskId);
 
     const container = document.getElementById('sync-progress-container');
@@ -195,7 +194,7 @@ function showSyncProgress(taskId) {
     const percent = document.getElementById('sync-progress-percent');
     container.style.display = 'block';
     fill.style.width = '0%';
-    text.innerText = '准备中...';
+    text.innerText = t.sync_preparing;
     percent.innerText = '0%';
 
     if (syncPollingInterval) clearInterval(syncPollingInterval);
@@ -206,21 +205,23 @@ function showSyncProgress(taskId) {
             const data = await resp.json();
             if (data.error) {
                 clearInterval(syncPollingInterval);
-                text.innerText = '❌ 错误: ' + data.error;
+                text.innerText = t.sync_error + data.error;
                 percent.innerText = '';
                 localStorage.removeItem(SYNC_TASK_KEY);
                 return;
             }
-            fill.style.width = data.progress + '%';
-            percent.innerText = data.progress + '%';
-            text.innerText = data.message || `进度 ${data.progress}%`;
+            const progress = data.progress || 0;
+            fill.style.width = progress + '%';
+            percent.innerText = progress + '%';
+            // 使用国际化文本，忽略后端的 message
+            text.innerText = t.sync_processing(progress, 100);
             if (data.done) {
                 clearInterval(syncPollingInterval);
                 localStorage.removeItem(SYNC_TASK_KEY);
                 if (data.error) {
-                    text.innerText = '❌ 同步失败: ' + data.error;
+                    text.innerText = t.sync_failed(data.error);
                 } else {
-                    text.innerText = '✅ 同步完成！';
+                    text.innerText = t.sync_complete;
                     resetAndLoadGames();
                 }
                 setTimeout(() => {
