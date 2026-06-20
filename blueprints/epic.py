@@ -4,10 +4,11 @@ import json
 import os
 import threading
 import uuid
+import sqlite3
 from core.task_manager import task_manager
 from epic_db import (
     clear_epic_games, upsert_epic_game, get_epic_auth,
-    get_local_epic_ids, delete_epic_games_not_in
+    get_local_epic_ids, delete_epic_games_not_in, DB_PATH
 )
 from cache_manager import download_platform_image
 from epic_client import fetch_epic_games, is_epic_authenticated, get_epic_account_name
@@ -69,8 +70,18 @@ def sync_epic_library():
             processed = 0
             task_manager.update_task(task_id, 10, f'开始同步，共 {total} 款游戏')
 
+            # 先查找后插入，已存在则跳过
             for game in remote_games:
                 app_name = game['game_id']
+                if app_name in local_ids:
+                    # 已存在，跳过
+                    processed += 1
+                    if processed % 10 == 0:
+                        progress = 10 + int((processed / total) * 70)
+                        task_manager.update_task(task_id, progress, f'已检查 {processed}/{total}')
+                    continue
+
+                # 新游戏，插入并下载图片
                 title = game['name']
                 cover_url = game['header_url']
                 if cover_url:
@@ -78,7 +89,7 @@ def sync_epic_library():
                 upsert_epic_game(app_name, title, cover_url, app_name, int(time.time()))
                 processed += 1
                 if processed % 1 == 0:
-                    progress = 10 + int((processed / total) * 70)  # 10% ~ 80%
+                    progress = 10 + int((processed / total) * 70)
                     task_manager.update_task(task_id, progress, f'已处理 {processed}/{total}')
 
             # 删除多余游戏

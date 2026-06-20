@@ -7,6 +7,7 @@ import sqlite3
 from typing import Optional, List, Dict, Any
 from urllib.parse import urlparse, parse_qs
 from database import DB_PATH, upsert_game, clear_shelves, add_shelf, add_game_to_shelf
+from cache_manager import get_cached_image_path, download_image
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -298,13 +299,23 @@ def refresh_games_library(steamid, api_key, steam_path=None, force=False, task_i
         if task_id:
             task_manager.update_task(task_id, 50, f'开始同步 (共 {total} 款)...')
 
-        # 3. 更新或插入远程游戏
+        # 3. 更新或插入远程游戏（仅新增，已有跳过）
         for appid, game in remote_games.items():
-            upsert_game(appid, game['name'], game['header_url'], now, game['type'])
-            processed += 1
-            if task_id and processed % 10 == 0:
-                progress = 10 + int((processed / total) * 40)
-                task_manager.update_task(task_id, min(progress, 90), f'已处理 {processed}/{total}')
+            if appid in local_ids:  # 已存在，跳过
+                processed += 1
+                if task_id and processed % 50 == 0:
+                    progress = 10 + int((processed / total) * 40)
+                    task_manager.update_task(task_id, min(progress, 90), f'已检查 {processed}/{total}')
+                continue
+
+        # 新游戏，插入并下载图片
+        upsert_game(appid, game['name'], game['header_url'], now, game['type'])
+        if not get_cached_image_path(appid).exists():
+            download_image(game['header_url'], appid)
+        processed += 1
+        if task_id and processed % 10 == 0:
+            progress = 10 + int((processed / total) * 40)
+            task_manager.update_task(task_id, min(progress, 90), f'已处理 {processed}/{total}')
 
         # 4. 删除本地多余的游戏
         to_delete = local_ids - remote_ids
@@ -381,29 +392,24 @@ def refresh_games_library_alt(steamid, api_key, force=False, task_id=None):
         if task_id:
             task_manager.update_task(task_id, 50, f'开始同步副号 (共 {total} 款)...')
 
+        # 处理副号游戏（仅新增，已有跳过）
         for game in owned_games:
-            # 如果已存在（主号或副号），更新名称和封面，但不改变类型（若为 owned 则保留）
-            # 但为了简化，这里直接 upsert 并标记为 alt（若已为主号，则跳过？）
-            # 我们策略：副号游戏始终标记为 alt，即使主号也有，也会覆盖为 alt？
-            # 更合理：如果已存在且类型为 owned，则保留 owned，不覆盖。
-            # 但是主号和副号可能有相同游戏，我们想保留主号的 owned 状态，副号的不覆盖。
-            # 因此先检查是否存在，若存在且 type='owned' 则跳过，否则插入或更新。
-            conn = sqlite3.connect(DB_PATH, timeout=10)
-            c = conn.cursor()
-            c.execute("SELECT type FROM games WHERE appid = ?", (game['appid'],))
-            row = c.fetchone()
-            if row and row[0] == 'owned':
-                # 主号已有，跳过副号
-                conn.close()
+            appid = game['appid']
+            if appid in local_ids:  # 已存在（主号或副号），跳过
                 processed += 1
+                if task_id and processed % 50 == 0:
+                    progress = 50 + int((processed / total) * 40)
+                    task_manager.update_task(task_id, min(progress, 90), f'已检查 {processed}/{total}')
                 continue
-            # 否则 upsert 为 alt
-            upsert_game(game['appid'], game['name'], game['header_url'], now, 'alt')
-            conn.close()
-            processed += 1
-            if task_id and processed % 10 == 0:
-                progress = 50 + int((processed / total) * 40)
-                task_manager.update_task(task_id, min(progress, 90), f'已处理 {processed}/{total}')
+
+        # 新游戏，插入并下载图片（标记为 alt）
+        upsert_game(appid, game['name'], game['header_url'], now, 'alt')
+        if not get_cached_image_path(appid).exists():
+            download_image(game['header_url'], appid)
+        processed += 1
+        if task_id and processed % 10 == 0:
+            progress = 50 + int((processed / total) * 40)
+            task_manager.update_task(task_id, min(progress, 90), f'已处理 {processed}/{total}')
 
         if task_id:
             task_manager.update_task(task_id, 95, '副号同步完成')

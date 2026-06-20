@@ -55,3 +55,26 @@ def count_cubejoy_games() -> int:
     count = c.fetchone()[0]
     conn.close()
     return count
+
+def get_local_cubejoy_ids() -> set:
+    conn = sqlite3.connect(DB_PATH, timeout=10)
+    c = conn.cursor()
+    c.execute("SELECT game_id FROM cubejoy_games")
+    ids = {row[0] for row in c.fetchall()}
+    conn.close()
+    return ids
+
+def delete_cubejoy_games_not_in(keep_ids: set):
+    if not keep_ids:
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        c = conn.cursor()
+        c.execute("DELETE FROM cubejoy_games")
+        conn.commit()
+        conn.close()
+        return
+    placeholders = ','.join(['?'] * len(keep_ids))
+    conn = sqlite3.connect(DB_PATH, timeout=10)
+    c = conn.cursor()
+    c.execute(f"DELETE FROM cubejoy_games WHERE game_id NOT IN ({placeholders})", tuple(keep_ids))
+    conn.commit()
+    conn.close()
