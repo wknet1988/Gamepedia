@@ -56,13 +56,13 @@ function appendGames(games) {
 
         let iconUrl = '';
         if (currentPlatform.id === 'steam') {
-            iconUrl = 'https://store.steampowered.com/favicon.ico';
+            iconUrl = '/static/images/steam.ico';
         } else if (currentPlatform.id === 'epic') {
-            iconUrl = 'https://www.epicgames.com/favicon.ico';
+            iconUrl = '/static/images/epic.ico';
         } else if (currentPlatform.id === 'gog') {
-            iconUrl = 'https://www.gog.com/favicon.ico';
+            iconUrl = '/static/images/gog.ico';
         } else if (currentPlatform.id === 'cubejoy') {
-            iconUrl = 'https://www.cubejoy.com/favicon.ico';
+            iconUrl = '/static/images/cubejoy.ico';
         }
         const iconHtml = iconUrl ? `<img src="${iconUrl}" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">` : '';
 

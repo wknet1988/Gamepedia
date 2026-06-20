@@ -13,14 +13,13 @@ async function loadShelves() {
             let displayName = p.name;
 
             if (p.id === 'steam') {
-                iconHtml = '<img src="https://store.steampowered.com/favicon.ico" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">';
+                iconHtml = '<img src="/static/images/steam.ico" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">';
             } else if (p.id === 'epic') {
-                iconHtml = '<img src="https://www.epicgames.com/favicon.ico" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">';
+                iconHtml = '<img src="/static/images/epic.ico" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">';
             } else if (p.id === 'gog') {
-                iconHtml = '<img src="https://www.gog.com/favicon.ico" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">';
+                iconHtml = '<img src="/static/images/gog.ico" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">';
             } else if (p.id === 'cubejoy') {
-                iconHtml = '<img src="https://www.cubejoy.com/favicon.ico" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">';
-                displayName = 'Cubejoy 方块';
+                iconHtml = '<img src="/static/images/cubejoy.ico" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;">';
             } else {
                 iconHtml = p.icon || '📁';
             }
