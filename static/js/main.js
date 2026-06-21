@@ -449,3 +449,13 @@ saveSteamgriddbBtn?.addEventListener('click', async () => {
         saveSteamgriddbBtn.innerText = t.steamgriddb_save;
     }
 });
+
+// ---- 重置搜索 ----
+document.getElementById('reset-search-btn')?.addEventListener('click', () => {
+    const input = document.getElementById('search-input');
+    if (input) {
+        input.value = '';          // 清空输入框
+        currentSearch = '';        // 重置搜索关键词
+        resetAndLoadGames();       // 重新加载游戏列表
+    }
+});

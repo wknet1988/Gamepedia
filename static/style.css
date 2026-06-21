@@ -476,3 +476,8 @@ html {
     height: 20px;
     display: block;
 }
+
+#reset-search-btn:hover {
+    background: #2c4c6c;
+    transform: scale(1.02);
+}
