@@ -168,6 +168,14 @@ def api_init_alt_library():
 
     return jsonify({"task_id": task_id})
 
+@auth_bp.route('/steamgriddb/status')
+def steamgriddb_status():
+    api_key = config.get('steamgriddb_api_key', '')
+    if api_key and len(api_key) > 0:
+        return jsonify({"configured": True})
+    else:
+        return jsonify({"configured": False})
+
 @auth_bp.route('/set_steamgriddb_api_key', methods=['POST'])
 def set_steamgriddb_api_key():
     data = request.json

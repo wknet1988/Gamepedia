@@ -74,6 +74,15 @@ const i18n = {
         sync_complete: '✅ 同步完成！',
         sync_failed: (error) => `❌ 同步失败: ${error}`,
         sync_error: '❌ 错误: ',
+        steamgriddb_label: 'SteamGridDB API Key：',
+        steamgriddb_placeholder: 'API Key',
+        steamgriddb_save: '保存 API Key',
+        steamgriddb_link: '点击注册并获取 API Key',
+        steamgriddb_hint: '（免费，可为 Epic、GOG 带来高清封面图）',
+        steamgriddb_saved: '✅ 保存成功！',
+        steamgriddb_save_failed: '❌ 保存失败：',
+        steamgriddb_network_error: '❌ 网络错误，请重试',
+        steamgriddb_empty_error: '请输入 API Key',
         help: '❓ 帮助',
         help_title: '❓ 帮助中心',
         help_q1: '1. 如何在 Steam 授权并同步？',
@@ -83,13 +92,15 @@ const i18n = {
 4. 点击“保存”，然后点击“同步”即可拉取游戏库。<br>
 <a href="https://steamcommunity.com/dev/apikey" target="_blank">点击这里申请 API Key</a>（需先登录 Steam）`,
 
-        help_q2: '2. 如何在 Epic 授权并同步？',
-        help_a2: `1. 在“授权管理”中找到 Epic 行。<br>
+help_q2: '2. 如何在 Epic 授权并同步？',
+help_a2: `1. 在“授权管理”中找到 Epic 行。<br>
 2. 点击“获取授权码”，新窗口打开 Epic 授权页面。<br>
 3. 登录 Epic 账号后，页面会显示一个表格化的 JSON（类似键值对列表）。<br>
 4. 找到表格中 authorizationCode 字段，其值类似 {"authorizationCode": "d887f29de1234b779067ce2b2fca3b84"}，复制该值。<br>
 5. 将复制的授权码粘贴到输入框，点击“提交”。<br>
-6. 认证成功后，点击“同步”即可拉取游戏库。`,
+6. 认证成功后，点击“同步”即可拉取游戏库。<br><br>
+<strong>SteamGridDB 高清封面图（可选）：</strong><br>
+在授权管理中找到 SteamGridDB 行，输入从 <a href="https://www.steamgriddb.com/profile/preferences/api" target="_blank">SteamGridDB</a> 获取的 API Key 并保存。这会让 Epic 和 GOG 游戏使用更高清的封面图。`,
 
         help_q3: '3. 如何安装油猴脚本并使用同步功能？',
         help_a3: `1. 首先安装 Tampermonkey 浏览器扩展（Chrome / Firefox / Edge 均可）。<br>
@@ -177,6 +188,15 @@ const i18n = {
         sync_complete: '✅ Sync complete!',
         sync_failed: (error) => `❌ Sync failed: ${error}`,
         sync_error: '❌ Error: ',
+        steamgriddb_label: 'SteamGridDB API Key:',
+        steamgriddb_placeholder: 'API Key',
+        steamgriddb_save: 'Save API Key',
+        steamgriddb_link: 'Click here to register and get API Key',
+        steamgriddb_hint: '(Free, brings high-quality covers for Epic & GOG)',
+        steamgriddb_saved: '✅ Saved successfully!',
+        steamgriddb_save_failed: '❌ Save failed: ',
+        steamgriddb_network_error: '❌ Network error, please retry',
+        steamgriddb_empty_error: 'Please enter API Key',
         help: '❓ Help',
         help_title: '❓ Help Center',
         help_q1: '1. How to authorize and sync Steam?',
@@ -186,13 +206,15 @@ const i18n = {
 4. Click "Save", then click "Sync" to pull your game library.<br>
 <a href="https://steamcommunity.com/dev/apikey" target="_blank">Click here to get API Key</a> (login required)`,
 
-        help_q2: '2. How to authorize and sync Epic?',
-        help_a2: `1. Find the Epic row in "Authorization Management".<br>
+help_q2: '2. How to authorize and sync Epic?',
+help_a2: `1. Find the Epic row in "Authorization Management".<br>
 2. Click "Get Auth Code" to open the Epic authorization page.<br>
 3. After logging in, the page will display a table-formatted JSON (like a key-value list).<br>
 4. Locate the authorizationCode field, which looks like {"authorizationCode": "d887f29de1234b779067ce2b2fca3b84"}, and copy it.<br>
 5. Paste the code into the input field and click "Submit".<br>
-6. After authentication, click "Sync" to pull your Epic library.`,
+6. After authentication, click "Sync" to pull your Epic library.<br><br>
+<strong>SteamGridDB HD Covers (Optional):</strong><br>
+Find the SteamGridDB row in "Authorization Management", enter the API Key obtained from <a href="https://www.steamgriddb.com/profile/preferences/api" target="_blank">SteamGridDB</a> and save it. This will provide higher-quality covers for Epic and GOG games.`,
 
         help_q3: '3. How to install userscripts and use sync?',
         help_a3: `1. Install Tampermonkey extension (Chrome / Firefox / Edge).<br>

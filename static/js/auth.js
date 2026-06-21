@@ -71,6 +71,23 @@ async function updateAuthStatus() {
         setStatus(document.getElementById('epic-status'), '❌ 错误', '#f66');
     }
 
+    // ---- SteamGridDB ----
+    try {
+        const resp = await fetch('/api/steamgriddb/status');
+        const data = await resp.json();
+        const statusEl = document.getElementById('steamgriddb-status');
+        if (data.configured) {
+            statusEl.innerText = `✅ ${t.auth_logged_in}`;
+            statusEl.style.color = '#6f6';
+        } else {
+            statusEl.innerText = `❌ ${t.auth_not_logged_in}`;
+            statusEl.style.color = '#f66';
+        }
+    } catch (e) {
+        console.error('SteamGridDB 状态获取失败', e);
+        setStatus(document.getElementById('steamgriddb-status'), '❌ 错误', '#f66');
+    }
+
     // ---- GOG ----
     try {
         const resp = await fetch('/api/gog/count');

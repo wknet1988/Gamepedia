@@ -6,6 +6,15 @@
     font-display: swap;
 }
 
+/* 链接颜色改为白色，便于识别 */
+a {
+    color: #ffffff !important;
+    text-decoration: underline;
+}
+a:hover {
+    color: #89d1f7 !important; /* 悬停时变为浅蓝色，保持交互反馈 */
+}
+
 button, .sidebar li {
     font-family: 'DanyaMingA', 'Segoe UI', sans-serif;
 }

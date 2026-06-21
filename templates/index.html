@@ -1,322 +1,294 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title id="page-title">Gamepedia</title>
     <!-- 添加版本号强制刷新缓存 -->
-    <link rel="icon" href="/static/Gamepedia.ico?v=2" type="image/x-icon">
-    <link rel="shortcut icon" href="/static/Gamepedia.ico?v=2" type="image/x-icon">
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+    <link rel="icon" href="/static/Gamepedia.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/static/Gamepedia.ico?v=2" type="image/x-icon" />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
 
-<body>
+  <body>
     <div id="login-panel" class="container">
-        <h1 id="app-name">Gamepedia</h1>
-        <div id="login-status"></div>
-        <button id="steam-login-btn" data-i18n="login">登录 Steam</button>
+      <h1 id="app-name">Gamepedia</h1>
+      <div id="login-status"></div>
+      <button id="steam-login-btn" data-i18n="login">登录 Steam</button>
     </div>
 
     <div id="app" style="display:none;">
-        <div class="sidebar">
-            <!-- <h2 id="shelf-title">📀 Gamepedia</h2> -->
-            <div id="shelf-logo">
-                <img src="/static/logo.png" alt="Gamepedia" style="width:100%; height:auto; display:block;">
-            </div>
-            <ul id="shelf-list">
-                <!-- 动态生成 -->
-            </ul>
-            <div style="margin-top: 30px; text-align: center;">
-                <button id="auth-btn" data-i18n="auth_management" style="margin-bottom: 10px;">🔑 授权管理</button>
-                <button id="settings-btn" data-i18n="settings">⚙️ 设置</button>
-            </div>
-            <div style="margin-top: 10px; text-align: center;">
-                <button id="help-btn" data-i18n="help" style="background: #2a4a6a; color: white;">❓ 帮助</button>
-            </div>
-            <div style="margin-top: 20px; text-align: center;">
-                <button id="sponsor-btn" data-i18n="sponsor" style="background: #ffd700; color: #2c1a0c;">❤️ 赞助</button>
-            </div>
+      <div class="sidebar">
+        <!-- <h2 id="shelf-title">📀 Gamepedia</h2> -->
+        <div id="shelf-logo">
+          <img src="/static/logo.png" alt="Gamepedia" style="width:100%; height:auto; display:block;" />
+        </div>
+        <ul id="shelf-list">
+          <!-- 动态生成 -->
+        </ul>
+        <div style="margin-top: 30px; text-align: center;">
+          <button id="auth-btn" data-i18n="auth_management" style="margin-bottom: 10px;">🔑 授权管理</button>
+          <button id="settings-btn" data-i18n="settings">⚙️ 设置</button>
+        </div>
+        <div style="margin-top: 10px; text-align: center;">
+          <button id="help-btn" data-i18n="help" style="background: #2a4a6a; color: white;">❓ 帮助</button>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+          <button id="sponsor-btn" data-i18n="sponsor" style="background: #ffd700; color: #2c1a0c;">❤️ 赞助</button>
+        </div>
 
-            <!-- 侧边栏底部图标行 -->
-            <div style="margin-top: 15px; text-align: center; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-                <a href="xbox://call" class="platform-icon-btn" title="Xbox for PC"><img src="/static/images/xbox.ico" alt="Xbox"></a>
-                <a href="uplay://call" class="platform-icon-btn" title="Ubisoft Connect"><img src="/static/images/ubisoft.ico" alt="Ubisoft Connect"></a>
-                <a href="battlenet://call" class="platform-icon-btn" title="Battle.net"><img src="/static/images/battlenet.ico" alt="Battle.net"></a>
-                <a href="origin://call" class="platform-icon-btn" title="EA/Origin"><img src="/static/images/origin.ico" alt="EA/Origin"></a>
-                <a href="steamchina://call" class="platform-icon-btn" title="SteamChina 蒸汽平台"><img src="/static/images/steamchina.ico" alt="SteamChina 蒸汽平台"></a>
-                <a href="https://itch.io/my-collections" target="_blank" class="platform-icon-btn" title="itch.io"><img src="/static/images/itch.io.ico" alt="itch.io"></a>
-                <a href="https://play.dlsite.com/" target="_blank" class="platform-icon-btn" title="DLSite"><img src="/static/images/dlsite.ico" alt="DLSite"></a>
-            </div>
+        <!-- 侧边栏底部图标行 -->
+        <div style="margin-top: 15px; text-align: center; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+          <a href="xbox://call" class="platform-icon-btn" title="Xbox for PC"><img src="/static/images/xbox.ico" alt="Xbox" /></a>
+          <a href="uplay://call" class="platform-icon-btn" title="Ubisoft Connect"><img src="/static/images/ubisoft.ico" alt="Ubisoft Connect" /></a>
+          <a href="battlenet://call" class="platform-icon-btn" title="Battle.net"><img src="/static/images/battlenet.ico" alt="Battle.net" /></a>
+          <a href="origin://call" class="platform-icon-btn" title="EA/Origin"><img src="/static/images/origin.ico" alt="EA/Origin" /></a>
+          <a href="steamchina://call" class="platform-icon-btn" title="SteamChina 蒸汽平台"><img src="/static/images/steamchina.ico" alt="SteamChina 蒸汽平台" /></a>
+          <a href="https://itch.io/my-collections" target="_blank" class="platform-icon-btn" title="itch.io"><img src="/static/images/itch.io.ico" alt="itch.io" /></a>
+          <a href="https://play.dlsite.com/" target="_blank" class="platform-icon-btn" title="DLSite"><img src="/static/images/dlsite.ico" alt="DLSite" /></a>
         </div>
-        <div class="main">
-            <!-- 同步进度条（顶部） -->
-            <div id="sync-progress-container"
-                style="display:none; margin-bottom: 10px; padding: 8px 12px; background: rgba(0,0,0,0.6); border-radius: 8px; border-left: 4px solid #66c0f4;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                    <span id="sync-progress-text" style="font-size: 13px; color: #c7d5e0;">同步中...</span>
-                    <span id="sync-progress-percent" style="font-size: 13px; color: #66c0f4;">0%</span>
-                </div>
-                <div style="width:100%; height:6px; background:#2a3e55; border-radius:4px; overflow:hidden;">
-                    <div id="sync-progress-fill"
-                        style="width:0%; height:100%; background:#66c0f4; border-radius:4px; transition:width 0.2s;">
-                    </div>
-                </div>
-            </div>
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="" data-i18n-placeholder="search_placeholder">
-                <button id="search-btn" data-i18n="search">🔍 搜索</button>
-            </div>
-            <h2 id="current-shelf-title"></h2>
-            <div class="games-grid" id="games-grid"></div>
-            <div id="game-counter"
-                style="text-align: center; margin-top: 20px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 30px; font-size: 14px;">
-            </div>
-            <div id="loading-more" style="display:none; text-align:center; padding:20px;">加载更多...</div>
+      </div>
+      <div class="main">
+        <!-- 同步进度条（顶部） -->
+        <div id="sync-progress-container" style="display:none; margin-bottom: 10px; padding: 8px 12px; background: rgba(0,0,0,0.6); border-radius: 8px; border-left: 4px solid #66c0f4;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span id="sync-progress-text" style="font-size: 13px; color: #c7d5e0;">同步中...</span>
+            <span id="sync-progress-percent" style="font-size: 13px; color: #66c0f4;">0%</span>
+          </div>
+          <div style="width:100%; height:6px; background:#2a3e55; border-radius:4px; overflow:hidden;">
+            <div id="sync-progress-fill" style="width:0%; height:100%; background:#66c0f4; border-radius:4px; transition:width 0.2s;"></div>
+          </div>
         </div>
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="" data-i18n-placeholder="search_placeholder" />
+          <button id="search-btn" data-i18n="search">🔍 搜索</button>
+        </div>
+        <h2 id="current-shelf-title"></h2>
+        <div class="games-grid" id="games-grid"></div>
+        <div id="game-counter" style="text-align: center; margin-top: 20px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 30px; font-size: 14px;"></div>
+        <div id="loading-more" style="display:none; text-align:center; padding:20px;">加载更多...</div>
+      </div>
     </div>
 
     <!-- 授权管理模态框 -->
     <div id="auth-modal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width: 920px; width: 90%; min-width: 720px; position: relative;">
-            <span class="close-auth-modal" style="position: absolute; top: 12px; right: 16px; font-size: 28px; font-weight: bold; cursor: pointer; color: #c79a2e;">&times;</span>
-            <h3 data-i18n="auth_management">🔑 授权管理</h3>
-            <div style="overflow-x: auto;">
-                <table style="width:100%; border-collapse: collapse; margin-top: 15px;">
-                    <thead>
-                        <tr style="background: #2a3e55; color: white;">
-                            <th style="padding: 10px; text-align: center; font-weight: bold;" data-i18n="auth_platform">平台</th>
-                            <th style="padding: 10px; text-align: center; font-weight: bold;" data-i18n="auth_status">状态</th>
-                            <th style="padding: 10px; text-align: center; font-weight: bold;" data-i18n="auth_action">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Steam -->
-                        <tr>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
-                                <img src="/static/images/steam.ico"
-                                    style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"><span
-                                    data-i18n="auth_steam">Steam</span>
-                            </td>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;"
-                                id="steam-status" data-i18n="auth_detecting">检测中</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
-                                <span style="white-space: nowrap;">
-                                    <input type="text" id="auth-steam-api-key" placeholder="API Key" style="width:120px; margin-right:4px; background:#1f1a10; border:1px solid #c79a2e; border-radius:20px; padding:4px 8px; color:white;">
-                                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" style="display:inline-block; width:20px; height:20px; line-height:20px; text-align:center; background:#0078d7; color:white; border-radius:4px; font-size:14px; font-weight:bold; text-decoration:none; margin-left:2px;" title="获取 Steam Web API Key">?</a>
-                                </span>
-                                <button class="auth-btn" id="auth-steam-login" data-i18n="auth_login">登录</button>
-                                <button class="auth-btn" id="auth-steam-save-api" data-i18n="auth_save">保存</button>
-                                <button class="auth-btn" id="auth-steam-sync" data-i18n="auth_sync">同步</button>
-                            </td>
-                        </tr>
-                        <!-- Steam 家庭组 -->
-                        <tr>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
-                                <img src="/static/images/steam.ico"
-                                    style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"><span
-                                    data-i18n="auth_steam_family">Steam 家庭组</span>
-                            </td>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;"
-                                id="family-status" data-i18n="auth_detecting">检测中</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
-                                <button class="auth-btn" id="auth-family-install" style="background:#6a4c7a;"
-                                    data-i18n="auth_install_script">安装脚本</button>
-                                <button class="auth-btn" id="auth-family-open"
-                                    data-i18n="auth_open_store">打开游戏库</button>
-                            </td>
-                        </tr>
-                        <!-- Steam 副号 -->
-                        <tr>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
-                                <img src="/static/images/steam.ico"
-                                    style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"><span
-                                    data-i18n="steam_alt">Steam 副号</span>
-                            </td>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;"
-                                id="steam-alt-status" data-i18n="auth_detecting">检测中</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;"> 
-                                <span style="white-space: nowrap;">
-                                    <input type="text" id="auth-steam-alt-api-key" placeholder="API Key" style="width:120px; margin:0 4px; background:#1f1a10; border:1px solid #c79a2e; border-radius:20px; padding:4px 8px; color:white;">
-                                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" style="display:inline-block; width:20px; height:20px; line-height:20px; text-align:center; background:#0078d7; color:white; border-radius:4px; font-size:14px; font-weight:bold; text-decoration:none; margin-left:2px;" title="获取 Steam Web API Key">?</a>
-                                </span>
-                                <button class="auth-btn" id="auth-steam-alt-login" data-i18n="auth_login">登录</button>
-                                <button class="auth-btn" id="auth-steam-alt-save-api" data-i18n="auth_save">保存</button>
-                                <button class="auth-btn" id="auth-steam-alt-sync" data-i18n="auth_sync">同步</button>
-                            </td>
-                        </tr>
-                        <!-- Epic -->
-                        <tr>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
-                                <img src="https://www.epicgames.com/favicon.ico"
-                                    style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"><span
-                                    data-i18n="auth_epic">Epic Games</span>
-                            </td>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;"
-                                id="epic-status" data-i18n="auth_detecting">检测中</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
-                                <button class="auth-btn" id="auth-epic-login" data-i18n="auth_get_code">获取授权码</button>
-                                <input type="text" id="auth-epic-code" placeholder="授权码"
-                                    data-i18n-placeholder="auth_epic_code_placeholder"
-                                    style="width:120px; margin:0 4px; background:#1f1a10; border:1px solid #c79a2e; border-radius:20px; padding:4px 8px; color:white;">
-                                <button class="auth-btn" id="auth-epic-submit" data-i18n="auth_submit">提交</button>
-                                <button class="auth-btn" id="auth-epic-sync" data-i18n="auth_sync">同步</button>
-                            </td>
-                        </tr>
-                        <!-- GOG -->
-                        <tr>
-                            <td style="padding: 10px; vertical-align: middle;">
-                                <img src="https://www.gog.com/favicon.ico"
-                                    style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"><span
-                                    data-i18n="auth_gog">GOG</span>
-                            </td>
-                            <td style="padding: 10px; vertical-align: middle;" id="gog-status"
-                                data-i18n="auth_detecting">检测中</td>
-                            <td style="padding: 10px; vertical-align: middle;">
-                                <button class="auth-btn" id="auth-gog-install" style="background:#6a4c7a;"
-                                    data-i18n="auth_install_script">安装脚本</button>
-                                <button class="auth-btn" id="auth-gog-store" style="background:#3a5a7a;"
-                                    data-i18n="auth_open_store">打开游戏库</button>
-                            </td>
-                        </tr>
-                        <!-- Cubejoy -->
-                        <tr>
-                            <td style="padding: 10px; vertical-align: middle;">
-                                <img src="https://www.cubejoy.com/favicon.ico"
-                                    style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"><span
-                                    data-i18n="auth_cubejoy">方块游戏</span>
-                            </td>
-                            <td style="padding: 10px; vertical-align: middle;" id="cubejoy-status"
-                                data-i18n="auth_detecting">检测中</td>
-                            <td style="padding: 10px; vertical-align: middle;">
-                                <button class="auth-btn" id="auth-cubejoy-install" style="background:#6a4c7a;"
-                                    data-i18n="auth_install_script">安装脚本</button>
-                                <button class="auth-btn" id="auth-cubejoy-store" style="background:#3a5a7a;"
-                                    data-i18n="auth_open_store">打开游戏库</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div id="auth-message" style="margin-top:15px; color:#ffaa66;"></div>
+      <div class="modal-content" style="max-width: 920px; width: 90%; min-width: 720px; position: relative;">
+        <span class="close-auth-modal" style="position: absolute; top: 12px; right: 16px; font-size: 28px; font-weight: bold; cursor: pointer; color: #c79a2e;">&times;</span>
+        <h3 data-i18n="auth_management">🔑 授权管理</h3>
+        <div style="overflow-x: auto;">
+          <table style="width:100%; border-collapse: collapse; margin-top: 15px;">
+            <thead>
+              <tr style="background: #2a3e55; color: white;">
+                <th style="padding: 10px; text-align: center; font-weight: bold;" data-i18n="auth_platform">平台</th>
+                <th style="padding: 10px; text-align: center; font-weight: bold;" data-i18n="auth_status">状态</th>
+                <th style="padding: 10px; text-align: center; font-weight: bold;" data-i18n="auth_action">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Steam -->
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <img src="/static/images/steam.ico" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;" /><span data-i18n="auth_steam">Steam</span>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;" id="steam-status" data-i18n="auth_detecting">检测中</td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <span style="white-space: nowrap;">
+                    <input type="text" id="auth-steam-api-key" placeholder="API Key" style="width:120px; margin-right:4px; background:#1f1a10; border:1px solid #c79a2e; border-radius:20px; padding:4px 8px; color:white;" />
+                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" style="display:inline-block; width:20px; height:20px; line-height:20px; text-align:center; background:#0078d7; color:white; border-radius:4px; font-size:14px; font-weight:bold; text-decoration:none; margin-left:2px;" title="☞ Steam Web API Key">?</a>
+                  </span>
+                  <button class="auth-btn" id="auth-steam-login" data-i18n="auth_login">登录</button>
+                  <button class="auth-btn" id="auth-steam-save-api" data-i18n="auth_save">保存</button>
+                  <button class="auth-btn" id="auth-steam-sync" data-i18n="auth_sync">同步</button>
+                </td>
+              </tr>
+              <!-- Steam 家庭组 -->
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <img src="/static/images/steam.ico" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;" /><span data-i18n="auth_steam_family">Steam 家庭组</span>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;" id="family-status" data-i18n="auth_detecting">检测中</td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <button class="auth-btn" id="auth-family-install" style="background:#6a4c7a;" data-i18n="auth_install_script">安装脚本</button>
+                  <button class="auth-btn" id="auth-family-open" data-i18n="auth_open_store">打开游戏库</button>
+                </td>
+              </tr>
+              <!-- Steam 副号 -->
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <img src="/static/images/steam.ico" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;" /><span data-i18n="steam_alt">Steam 副号</span>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;" id="steam-alt-status" data-i18n="auth_detecting">检测中</td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <span style="white-space: nowrap;">
+                    <input type="text" id="auth-steam-alt-api-key" placeholder="API Key" style="width:120px; margin:0 4px; background:#1f1a10; border:1px solid #c79a2e; border-radius:20px; padding:4px 8px; color:white;" />
+                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" style="display:inline-block; width:20px; height:20px; line-height:20px; text-align:center; background:#0078d7; color:white; border-radius:4px; font-size:14px; font-weight:bold; text-decoration:none; margin-left:2px;" title="☞ Steam Web API Key">?</a>
+                  </span>
+                  <button class="auth-btn" id="auth-steam-alt-login" data-i18n="auth_login">登录</button>
+                  <button class="auth-btn" id="auth-steam-alt-save-api" data-i18n="auth_save">保存</button>
+                  <button class="auth-btn" id="auth-steam-alt-sync" data-i18n="auth_sync">同步</button>
+                </td>
+              </tr>
+              <!-- Epic -->
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <img src="https://www.epicgames.com/favicon.ico" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;" /><span data-i18n="auth_epic">Epic Games</span>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;" id="epic-status" data-i18n="auth_detecting">检测中</td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <button class="auth-btn" id="auth-epic-login" data-i18n="auth_get_code">获取授权码</button>
+                  <input type="text" id="auth-epic-code" placeholder="授权码" data-i18n-placeholder="auth_epic_code_placeholder" style="width:120px; margin:0 4px; background:#1f1a10; border:1px solid #c79a2e; border-radius:20px; padding:4px 8px; color:white;" />
+                  <button class="auth-btn" id="auth-epic-submit" data-i18n="auth_submit">提交</button>
+                  <button class="auth-btn" id="auth-epic-sync" data-i18n="auth_sync">同步</button>
+                </td>
+              </tr>
+              <!-- SteamGridDB -->
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                    🟦
+                  <span data-i18n="steamgriddb_platform">SteamGridDB</span>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;" id="steamgriddb-status" data-i18n="auth_detecting">检测中</td>
+                <td style="padding: 10px; border-bottom: 1px solid #444; vertical-align: middle;">
+                  <span style="white-space: nowrap;">
+                    <input type="text" id="steamgriddb-api-key" placeholder="" data-i18n-placeholder="steamgriddb_placeholder" style="width:140px; margin-right:4px; background:#1f1a10; border:1px solid #c79a2e; border-radius:20px; padding:4px 8px; color:white;" />
+                    <a href="https://www.steamgriddb.com/profile/preferences/api" target="_blank" style="display:inline-block; width:20px; height:20px; line-height:20px; text-align:center; background:#0078d7; color:white; border-radius:4px; font-size:14px; font-weight:bold; text-decoration:none; margin-left:2px;" title="☞ SteamGridDB API Key">?</a>
+                  </span>
+                  <button class="auth-btn" id="save-steamgriddb-api-key" data-i18n="steamgriddb_save">保存</button>
+                </td>
+              </tr>
+
+              <!-- GOG -->
+              <tr>
+                <td style="padding: 10px; vertical-align: middle;">
+                  <img src="https://www.gog.com/favicon.ico" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;" /><span data-i18n="auth_gog">GOG</span>
+                </td>
+                <td style="padding: 10px; vertical-align: middle;" id="gog-status" data-i18n="auth_detecting">检测中</td>
+                <td style="padding: 10px; vertical-align: middle;">
+                  <button class="auth-btn" id="auth-gog-install" style="background:#6a4c7a;" data-i18n="auth_install_script">安装脚本</button>
+                  <button class="auth-btn" id="auth-gog-store" style="background:#3a5a7a;" data-i18n="auth_open_store">打开游戏库</button>
+                </td>
+              </tr>
+              <!-- Cubejoy -->
+              <tr>
+                <td style="padding: 10px; vertical-align: middle;">
+                  <img src="https://www.cubejoy.com/favicon.ico" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;" /><span data-i18n="auth_cubejoy">方块游戏</span>
+                </td>
+                <td style="padding: 10px; vertical-align: middle;" id="cubejoy-status" data-i18n="auth_detecting">检测中</td>
+                <td style="padding: 10px; vertical-align: middle;">
+                  <button class="auth-btn" id="auth-cubejoy-install" style="background:#6a4c7a;" data-i18n="auth_install_script">安装脚本</button>
+                  <button class="auth-btn" id="auth-cubejoy-store" style="background:#3a5a7a;" data-i18n="auth_open_store">打开游戏库</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+        <div id="auth-message" style="margin-top:15px; color:#ffaa66;"></div>
+      </div>
     </div>
 
     <!-- 赞助模态框 -->
     <div id="sponsor-modal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width: 600px;">
-            <span class="close-sponsor-modal">&times;</span>
-            <h3 data-i18n="sponsor_title">☕ 赞助支持</h3>
-            <p data-i18n="sponsor_desc">本软件是免费软件，无需付费即可使用完整功能。\n但如果您觉得本项目有帮助，欢迎赞助以支持持续开发！</p>
-            <!-- 支付方式内容（保持不变） -->
-            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px;">
-                <!-- Alipay -->
-                <div style="text-align: center; margin: 10px;">
-                    <div
-                        style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
-                        <img src="/static/images/alipay.ico" alt="Alipay" style="width: 24px; height: 24px;">
-                        <span style="font-weight: bold;" data-i18n="alipay">支付宝</span>
-                    </div>
-                    <img src="/static/images/alipay.png" alt="Alipay QR"
-                        style="width: 180px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-                </div>
-                <!-- WeChat Pay -->
-                <div style="text-align: center; margin: 10px;">
-                    <div
-                        style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
-                        <img src="/static/images/wechat.ico" alt="WeChat Pay" style="width: 24px; height: 24px;">
-                        <span style="font-weight: bold;" data-i18n="wechat_pay">微信支付</span>
-                    </div>
-                    <img src="/static/images/wechat.png" alt="WeChat QR"
-                        style="width: 180px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-                </div>
-                <!-- PayPal -->
-                <div style="text-align: center; margin: 10px;">
-                    <a href="https://www.paypal.me/wknet1988" target="_blank"
-                        style="display: inline-block; padding: 10px 24px; background: #0070ba; color: white; border-radius: 30px; text-decoration: none; font-weight: bold;">
-                        <img src="/static/images/paypal.ico" alt="PayPal"
-                            style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
-                        <span data-i18n="paypal">PayPal</span>
-                    </a>
-                </div>
+      <div class="modal-content" style="max-width: 600px;">
+        <span class="close-sponsor-modal">&times;</span>
+        <h3 data-i18n="sponsor_title">☕ 赞助支持</h3>
+        <p data-i18n="sponsor_desc">本软件是免费软件，无需付费即可使用完整功能。\n但如果您觉得本项目有帮助，欢迎赞助以支持持续开发！</p>
+        <!-- 支付方式内容（保持不变） -->
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px;">
+          <!-- Alipay -->
+          <div style="text-align: center; margin: 10px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
+              <img src="/static/images/alipay.ico" alt="Alipay" style="width: 24px; height: 24px;" />
+              <span style="font-weight: bold;" data-i18n="alipay">支付宝</span>
             </div>
-            <div style="margin-top: 20px; font-size: 12px; color: #888;">
-                <span data-i18n="sponsor_thanks">感谢您的支持！</span>
+            <img src="/static/images/alipay.png" alt="Alipay QR" style="width: 180px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);" />
+          </div>
+          <!-- WeChat Pay -->
+          <div style="text-align: center; margin: 10px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 8px;">
+              <img src="/static/images/wechat.ico" alt="WeChat Pay" style="width: 24px; height: 24px;" />
+              <span style="font-weight: bold;" data-i18n="wechat_pay">微信支付</span>
             </div>
+            <img src="/static/images/wechat.png" alt="WeChat QR" style="width: 180px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);" />
+          </div>
+          <!-- PayPal -->
+          <div style="text-align: center; margin: 10px;">
+            <a href="https://www.paypal.me/wknet1988" target="_blank" style="display: inline-block; padding: 10px 24px; background: #0070ba; color: white; border-radius: 30px; text-decoration: none; font-weight: bold;">
+              <img src="/static/images/paypal.ico" alt="PayPal" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;" />
+              <span data-i18n="paypal">PayPal</span>
+            </a>
+          </div>
         </div>
+        <div style="margin-top: 20px; font-size: 12px; color: #888;">
+          <span data-i18n="sponsor_thanks">感谢您的支持！</span>
+        </div>
+      </div>
     </div>
 
     <!-- 设置模态框（仅保留全局设置） -->
     <div id="settings-modal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close-settings-modal">&times;</span>
-            <h3 data-i18n="settings_title">⚙️ 设置</h3>
-            <div>
-                <label data-i18n="bg_label">🎨 自定义背景图（平铺显示）：</label>
-                <input type="file" id="bg-image-upload" accept="image/*">
-                <button id="clear-bg-btn" data-i18n="clear_bg">移除背景</button>
-                <p style="font-size:12px; margin-top:8px;" data-i18n="bg_hint">提示：上传的图片会以平铺方式作为背景，如需更精细的皮肤自定义，请修改
-                    <code>static/style.css</code> 中的 CSS 变量。</p>
-            </div><br>
-            <div style="margin-bottom: 20px;">
-                <label for="steamgriddb-api-key">SteamGridDB API Key：</label>
-                <input type="text" id="steamgriddb-api-key" placeholder="粘贴您的 SteamGridDB API Key" style="width: 90%;">
-                <p><a href="https://www.steamgriddb.com/profile/preferences/api" target="_blank">点击注册并获取 API Key</a>（免费，可为Epic，GOG带来高清封面图）</p>
-                <button id="save-steamgriddb-api-key">保存 API Key</button>
-            </div>
-            <div id="settings-message" style="margin-top: 15px; color: #ffaa66;"></div>
-            <div id="app-version" style="margin-top:15px; font-size:12px; color:#888;"></div>
-            <div id="app-copyright" style="margin-top:4px; font-size:11px; color:#666;"></div>
-        </div>
+      <div class="modal-content">
+        <span class="close-settings-modal">&times;</span>
+        <h3 data-i18n="settings_title">⚙️ 设置</h3>
+        <div>
+          <label data-i18n="bg_label">🎨 自定义背景图（平铺显示）：</label>
+          <input type="file" id="bg-image-upload" accept="image/*" />
+          <button id="clear-bg-btn" data-i18n="clear_bg">移除背景</button>
+          <p style="font-size:12px; margin-top:8px;" data-i18n="bg_hint">
+            提示：上传的图片会以平铺方式作为背景，如需更精细的皮肤自定义，请修改
+            <code>static/style.css</code> 中的 CSS 变量。
+          </p>
+        </div><br />
+        <div id="settings-message" style="margin-top: 15px; color: #ffaa66;"></div>
+        <div id="app-version" style="margin-top:15px; font-size:12px; color:#888;"></div>
+        <div id="app-copyright" style="margin-top:4px; font-size:11px; color:#666;"></div>
+      </div>
     </div>
 
     <!-- Steam 路径输入浮层 -->
     <div id="steam-path-modal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close-path-modal">&times;</span>
-            <h3 data-i18n="steam_path_title">请指定 Steam 安装路径</h3>
-            <p data-i18n="steam_path_desc">为了读取您的游戏自定义列表和“我的最爱”，需要知道 Steam 的安装目录。<br>
-                例如：<code>D:\Steam</code> 或 <code>C:\Program Files (x86)\Steam</code></p>
-            <input type="text" id="modal-steam-path" placeholder="" data-i18n-placeholder="steam_path_placeholder"
-                size="50">
-            <button id="modal-save-steam-path" data-i18n="save_path">保存路径</button>
-            <div id="path-error" style="color:red; margin-top:10px;"></div>
-        </div>
+      <div class="modal-content">
+        <span class="close-path-modal">&times;</span>
+        <h3 data-i18n="steam_path_title">请指定 Steam 安装路径</h3>
+        <p data-i18n="steam_path_desc">
+          为了读取您的游戏自定义列表和“我的最爱”，需要知道 Steam 的安装目录。<br />
+          例如：<code>D:\Steam</code> 或 <code>C:\Program Files (x86)\Steam</code>
+        </p>
+        <input type="text" id="modal-steam-path" placeholder="" data-i18n-placeholder="steam_path_placeholder" size="50" />
+        <button id="modal-save-steam-path" data-i18n="save_path">保存路径</button>
+        <div id="path-error" style="color:red; margin-top:10px;"></div>
+      </div>
     </div>
 
     <!-- 同步进度浮层 -->
     <div id="sync-progress-modal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width: 500px;">
-            <h3>🔄 同步中...</h3>
-            <div style="margin: 20px 0;">
-                <div id="sync-progress-bar"
-                    style="width:100%; height:20px; background:#2a3e55; border-radius:10px; overflow:hidden;">
-                    <div id="sync-progress-fill"
-                        style="width:0%; height:100%; background:#66c0f4; border-radius:10px; transition:width 0.3s;">
-                    </div>
-                </div>
-                <div id="sync-progress-text" style="margin-top:10px; text-align:center; color:#c7d5e0;">准备中...</div>
-            </div>
-            <button id="sync-progress-close" style="display:none;" onclick="closeSyncProgress()">关闭</button>
+      <div class="modal-content" style="max-width: 500px;">
+        <h3>🔄 同步中...</h3>
+        <div style="margin: 20px 0;">
+          <div id="sync-progress-bar" style="width:100%; height:20px; background:#2a3e55; border-radius:10px; overflow:hidden;">
+            <div id="sync-progress-fill" style="width:0%; height:100%; background:#66c0f4; border-radius:10px; transition:width 0.3s;"></div>
+          </div>
+          <div id="sync-progress-text" style="margin-top:10px; text-align:center; color:#c7d5e0;">准备中...</div>
         </div>
+        <button id="sync-progress-close" style="display:none;" onclick="closeSyncProgress()">关闭</button>
+      </div>
     </div>
 
     <!-- 帮助模态框 -->
-<div id="help-modal" class="modal" style="display:none;">
-    <div class="modal-content" style="max-width: 720px; position: relative; max-height: 85vh; overflow-y: auto;">
+    <div id="help-modal" class="modal" style="display:none;">
+      <div class="modal-content" style="max-width: 720px; position: relative; max-height: 85vh; overflow-y: auto;">
         <span class="close-help-modal" style="position: absolute; top: 12px; right: 16px; font-size: 28px; font-weight: bold; cursor: pointer; color: #c79a2e;">&times;</span>
         <h3 data-i18n="help_title">❓ 帮助中心</h3>
         <div id="help-content" style="margin-top: 20px;">
-            <!-- 由 JS 动态生成 -->
+          <!-- 由 JS 动态生成 -->
         </div>
+      </div>
     </div>
-</div>
 
     <!-- 回到顶部按钮 -->
     <button id="back-to-top" style="position:fixed; bottom:80px; right:20px; z-index:9999; display:none; width:44px; height:44px; border-radius:50%; background:#2c5a2e; color:white; border:none; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.3); opacity:0.8; transition:opacity 0.2s, transform 0.2s; display:flex; align-items:center; justify-content:center; padding:0;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="18 15 12 9 6 15"></polyline>
-        </svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
     </button>
 
     <!-- <script src="/static/script.js"></script> -->
@@ -329,6 +301,5 @@
     <script src="/static/js/main.js"></script>
     <!-- 占位符，确保页面始终有滚动条 -->
     <div style="height: 1px; width: 100%;"></div>
-</body>
-
+  </body>
 </html>

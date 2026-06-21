@@ -98,6 +98,17 @@ async function saveSteamPath() {
     }
 }
 
+async function loadSteamgriddbApiKey() {
+    try {
+        const resp = await fetch('/api/status');
+        const data = await resp.json();
+        const key = data.steamgriddb_api_key || '';
+        if (steamgriddbApiKeyInput) {
+            steamgriddbApiKeyInput.value = key;
+        }
+    } catch(e) {}
+}
+
 // ---- 登录状态 ----
 async function checkStatus() {
     try {
@@ -109,6 +120,7 @@ async function checkStatus() {
             loadBackgroundFromStorage();
             await loadShelves();
             resetAndLoadGames();
+            loadSteamgriddbApiKey();
         } else {
             document.getElementById('login-panel').style.display = 'block';
             document.getElementById('app').style.display = 'none';
@@ -392,12 +404,12 @@ const steamgriddbApiStatus = document.getElementById('steamgriddb-api-status');
 saveSteamgriddbBtn?.addEventListener('click', async () => {
     const apiKey = steamgriddbApiKeyInput.value.trim();
     if (!apiKey) {
-        steamgriddbApiStatus.innerText = '请输入 API Key';
+        steamgriddbApiStatus.innerText = t.steamgriddb_empty_error;
         steamgriddbApiStatus.style.color = '#f66';
         return;
     }
     saveSteamgriddbBtn.disabled = true;
-    saveSteamgriddbBtn.innerText = '保存中...';
+    saveSteamgriddbBtn.innerText = t.steamgriddb_save + '...';
     try {
         const resp = await fetch('/api/set_steamgriddb_api_key', {
             method: 'POST',
@@ -406,18 +418,18 @@ saveSteamgriddbBtn?.addEventListener('click', async () => {
         });
         const data = await resp.json();
         if (data.success) {
-            steamgriddbApiStatus.innerText = '✅ 保存成功！';
+            steamgriddbApiStatus.innerText = t.steamgriddb_saved;
             steamgriddbApiStatus.style.color = '#6f6';
         } else {
-            steamgriddbApiStatus.innerText = '❌ 保存失败：' + (data.error || '未知错误');
+            steamgriddbApiStatus.innerText = t.steamgriddb_save_failed + (data.error || '');
             steamgriddbApiStatus.style.color = '#f66';
         }
     } catch (err) {
-        steamgriddbApiStatus.innerText = '❌ 网络错误，请重试';
+        steamgriddbApiStatus.innerText = t.steamgriddb_network_error;
         steamgriddbApiStatus.style.color = '#f66';
         console.error(err);
     } finally {
         saveSteamgriddbBtn.disabled = false;
-        saveSteamgriddbBtn.innerText = '保存 API Key';
+        saveSteamgriddbBtn.innerText = t.steamgriddb_save;
     }
 });
