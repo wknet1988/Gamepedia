@@ -1,3 +1,15 @@
+@font-face {
+    font-family: 'DanyaMingA';
+    src: url('/static/fonts/DanyaMingA.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+button, .sidebar li {
+    font-family: 'DanyaMingA', 'Segoe UI', sans-serif;
+}
+
 /* Steam 风格深色主题 */
 :root {
     --bg-color: #0f1a24;
@@ -11,7 +23,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', 'Motiva Sans', 'Franklin Gothic Medium', Tahoma, sans-serif;
+    font-family: 'DanyaMingA','Segoe UI', 'Motiva Sans', 'Franklin Gothic Medium', Tahoma, sans-serif;
     margin: 0;
     padding: 0;
     background: var(--bg-gradient);
@@ -157,6 +169,7 @@ button:hover {
     font-weight: bold;
     background: rgba(0, 0, 0, 0.6);
     color: var(--text-color);
+    font-family: 'DanyaMingA', 'Segoe UI', sans-serif;
 }
 
 .game-card .actions button {
