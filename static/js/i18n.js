@@ -128,7 +128,7 @@ const i18n = {
         no_games: 'No games found',
         search_result_prefix: 'Search results: “',
         search_result_suffix: '”',
-        run: 'Run',
+        run: 'Play',
         loading_more: 'Loading more...',
         counter_text: '{loaded} of {total} games',
         epic_login: 'Login with Epic',

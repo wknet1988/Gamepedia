@@ -126,18 +126,31 @@ function appendGames(games) {
             }
         `;
 
+        // 游戏名称链接
+        let nameLink = '#';
+        let nameTarget = '_self';
+        if (currentPlatform.id === 'steam') {
+            nameLink = `https://steamdb.info/app/${game.id}/`;
+            nameTarget = '_blank';
+        } else {
+            // 其他平台跳转商店（如有需要）
+            nameLink = storeUrl;
+            nameTarget = '_blank';
+        }
+
         card.innerHTML = `
             <div class="game-image-container" style="position: relative;">
                 <a href="${storeUrl}" target="_blank" rel="noopener noreferrer" style="display: block;">
-                    <img class="lazy-img" data-src="${proxyUrl}" 
-                         data-original="${originalUrl}"
-                         src="${placeholderSvg}" 
+                    <img class="lazy-img" data-src="${game.image_url}" 
+                         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Crect width='200' height='100' fill='%232a3e55'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2389a3b5'%3ELoading...%3C/text%3E%3C/svg%3E" 
                          alt="${escapeHtml(game.name)}"
-                         onerror="${onerrorHandler}">
+                         onerror="this.src='${placeholderPath}'">
                 </a>
                 ${badgeHtml}
             </div>
-            <div class="game-name">${escapeHtml(game.name)}</div>
+            <a href="${nameLink}" target="${nameTarget}" style="text-decoration: none; display: block;">
+                <div class="game-name">${escapeHtml(game.name)}</div>
+            </a>
             ${actionsHtml}
         `;
         grid.appendChild(card);
