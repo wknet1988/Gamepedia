@@ -1,8 +1,8 @@
 // ==================== 国际化配置 ====================
 const i18n = {
     zh: {
-        app_name: 'GP游戏收藏馆',
-        shelf_header: '📀 GP游戏收藏馆',
+        app_name: 'GD游戏收藏馆',
+        shelf_header: '📀 GD游戏收藏馆',
         login: '登录 Steam',
         settings: '⚙️ 设置',
         search: '🔍 搜索',
@@ -107,7 +107,7 @@ help_a2: `1. 在“授权管理”中找到 Epic 行。<br>
 2. 在“授权管理”中点击对应平台的“安装脚本”按钮（Steam 家庭组、GOG、方块游戏）。<br>
 3. 下载 .user.js 文件后，打开 Tampermonkey 管理面板 → 实用程序 → 从文件安装，选择该文件。<br>
 4. 安装后，在“授权管理”中点击“打开游戏库”进入对应平台页面。<br>
-5. 页面右下角会出现“同步到GP游戏收藏馆”按钮，点击即可同步游戏库。`,
+5. 页面右下角会出现“同步到GD游戏收藏馆”按钮，点击即可同步游戏库。`,
 
         help_q4: '4. 软件是免费的吗？',
         help_a4: '软件完全开源且永久免费使用全部功能，如果您希望赞助本项目，请点击主界面“赞助”按钮。',
@@ -115,8 +115,8 @@ help_a2: `1. 在“授权管理”中找到 Epic 行。<br>
         help_a5: '本软件完全开源可审查，不含任何恶意代码。通过官方登录取得的认证信息都存储在本地，不会上传或分享给第三方。只要用户保持电脑环境可靠，则没有安全风险。但要谨防授权信息泄露，不使用时可在申请页面解授权，并删除config.db。',
     },
     en: {
-        app_name: 'Gamepedia',
-        shelf_header: '📀 Gamepedia',
+        app_name: 'Gamediso',
+        shelf_header: '📀 Gamediso',
         login: 'Login with Steam',
         settings: '⚙️ Settings',
         search: '🔍 Search',
@@ -221,7 +221,7 @@ Find the SteamGridDB row in "Authorization Management", enter the API Key obtain
 2. In "Authorization Management", click "Install Script" for the platform (Steam Family, GOG, Cubejoy).<br>
 3. After downloading the .user.js file, open Tampermonkey dashboard → Utilities → Install from file, and select it.<br>
 4. After installation, click "Open Library" in "Authorization Management" to visit the platform page.<br>
-5. A "Sync to Gamepedia" button will appear at the bottom right; click it to sync.`,
+5. A "Sync to Gamediso" button will appear at the bottom right; click it to sync.`,
 
         help_q4: '4. Is the software free?',
         help_a4: 'The software is completely open-source and permanently free to use all features. If you wish to sponsor this project, please click the "Sponsor" button on the main interface.',

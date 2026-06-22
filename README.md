@@ -1,7 +1,7 @@
-Gamepedia User Manual
+Gamediso User Manual
 [🇨🇳 点此查看中文说明](./README.zh.md)
 
-Gamepedia is a multi-platform game library aggregator that helps you centrally view and manage games from Steam, Epic Games, GOG, and Cubejoy. Without switching multiple clients, you can browse all your games in a clean web interface, jump to store pages, launch games with one click, and enjoy locally cached cover images with infinite scrolling.
+Gamediso is a multi-platform game library aggregator that helps you centrally view and manage games from Steam, Epic Games, GOG, and Cubejoy. Without switching multiple clients, you can browse all your games in a clean web interface, jump to store pages, launch games with one click, and enjoy locally cached cover images with infinite scrolling.
 Features
 
     🔐 Unified Authorization – Configure API keys or authorization codes for each platform in one place.
@@ -22,7 +22,7 @@ Features
 
     🌐 Internationalization – Automatically switches between Chinese and English based on browser language.
 
-<img src="static/homepage_snapshot_en.png" alt="Gamepedia Homepage" width="800">
+<img src="static/homepage_snapshot_en.png" alt="Gamediso Homepage" width="800">
 
 Installation & Running
 Prerequisites
@@ -44,8 +44,8 @@ Download & Launch
     Clone or download this repository:
     bash
 
-    git clone https://github.com/yourusername/gamepedia.git
-    cd gamepedia
+    git clone https://github.com/yourusername/Gamediso.git
+    cd Gamediso
 
     Install dependencies:
     bash
@@ -62,7 +62,7 @@ Download & Launch
 
     python app.py
 
-    Your browser will automatically open http://localhost:5000. Start using Gamepedia!
+    Your browser will automatically open http://localhost:5000. Start using Gamediso!
 
     After first start, go to "🔑 Authorization Management" to configure each platform (see below).
 
@@ -79,7 +79,7 @@ Epic Games	OAuth Authorization Code	1. Click "Get Auth Code" to go to legendary.
 GOG	Userscript	Install gog_sync.user.js, visit GOG Account page, click the bottom‑right button	Automatically fetches all GOG games
 Cubejoy	Userscript	Install cubejoy_sync.user.js, visit My Games, click the bottom‑right button	Automatically fetches all pages of your Cubejoy library
 
-    Note: After installing the userscripts, ensure you are logged into the corresponding platform page and click the "Sync to Gamepedia" button.
+    Note: After installing the userscripts, ensure you are logged into the corresponding platform page and click the "Sync to Gamediso" button.
 
 Interface Walkthrough
 
@@ -107,7 +107,7 @@ Q: Epic auth code expired?
 A: Auth codes are short‑lived (usually a few minutes). Submit quickly. If expired, just obtain a new one.
 Q: After GOG or Cubejoy sync, no games appear?
 
-A: Refresh the Gamepedia page (F5) after successful sync; the platform tab will appear. If still missing, check the corresponding database file (gog_games.db / cubejoy_games.db) for data.
+A: Refresh the Gamediso page (F5) after successful sync; the platform tab will appear. If still missing, check the corresponding database file (gog_games.db / cubejoy_games.db) for data.
 Q: How to change language?
 
 A: Language is auto‑detected from browser settings (Chinese/English). To force a specific language, modify the userLang variable in static/script.js or change your browser’s language preference.
@@ -118,4 +118,4 @@ Contributing & License
 
 This project is released under the MIT License. Contributions and Pull Requests are welcome. When adding new platforms or improvements, please maintain modularity for easy integration.
 
-Enjoy using Gamepedia – Happy Gaming!
+Enjoy using Gamediso – Happy Gaming!

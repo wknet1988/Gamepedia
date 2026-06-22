@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name         Steam Family Sync to Gamepedia
-// @name-zh      Steam 家庭库同步到GP游戏收藏馆
+// @name         Steam Family Sync to Gamediso
+// @name-zh      Steam 家庭库同步到GD游戏收藏馆
 // @namespace    http://localhost:5000
 // @version      1.2.3
-// @description  Fetch Steam family library and sync to Gamepedia
+// @description  Fetch Steam family library and sync to Gamediso
 // @description-zh  从 Steam 家庭库同步游戏列表到本地 GP 游戏收藏馆
-// @author       Gamepedia
+// @author       Gamediso
 // @match        https://store.steampowered.com/account/*
 // @grant        GM_xmlhttpRequest
 // @connect      localhost
@@ -18,20 +18,20 @@
     // 国际化文本
     const i18n = {
         zh: {
-            sync_btn: '📀 同步到GP游戏收藏馆',
+            sync_btn: '📀 同步到GD游戏收藏馆',
             sync_btn_syncing: '同步中...',
             login_error: '无法获取登录信息，请确保已登录 Steam 商店',
             sync_success: (family_name, count) => `同步成功！家庭组：${family_name}，共 ${count} 款游戏`,
             sync_failed: (error) => `同步失败：${error || '未知错误'}`,
-            network_error: '网络错误，请确保本地GP游戏收藏馆服务已启动 (http://localhost:5000)'
+            network_error: '网络错误，请确保本地GD游戏收藏馆服务已启动 (http://localhost:5000)'
         },
         en: {
-            sync_btn: '📀 Sync to Gamepedia',
+            sync_btn: '📀 Sync to Gamediso',
             sync_btn_syncing: 'Syncing...',
             login_error: 'Failed to get login info, please ensure you are logged into Steam Store',
             sync_success: (family_name, count) => `Sync successful! Family group: ${family_name}, ${count} games`,
             sync_failed: (error) => `Sync failed: ${error || 'Unknown error'}`,
-            network_error: 'Network error, please ensure Gamepedia service is running (http://localhost:5000)'
+            network_error: 'Network error, please ensure Gamediso service is running (http://localhost:5000)'
         }
     };
 
@@ -88,7 +88,7 @@
                         alert(t.sync_failed(data.error));
                     }
                 } catch(e) {
-                    alert(t.sync_failed('Invalid response'));
+                    //alert(t.sync_failed('Invalid response'));
                 }
                 // 恢复按钮
                 btn.disabled = false;
