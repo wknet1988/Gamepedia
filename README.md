@@ -35,11 +35,11 @@ Prerequisites
 
 Download & Launch
 
-    ⚠️ Windows Users
-    Double-click setup.bat for one-click installation. The script will automatically set up Python and install all dependencies.
+    ⚠️ Windows Users of Release version
+    Double-click run.bat to run the application.
 
-    ⚠️ Linux/Mac Users
-    Double-click setup.sh for one-click installation. The script will automatically set up Python and install all dependencies.
+    ⚠️ Linux/Mac Users of Release version
+    Double-click setup.sh to run the application.
 
     Clone or download this repository:
     bash
@@ -116,6 +116,6 @@ Q: Cached images are corrupted?
 A: The program includes automatic corruption detection and repair. When accessing the list, corrupted images will be re‑downloaded. You can also manually delete the platform sub‑folders under cache/ and restart the app.
 Contributing & License
 
-This project is released under the MIT License. Contributions and Pull Requests are welcome. When adding new platforms or improvements, please maintain modularity for easy integration.
+This project is released under the Apache 2.0 License. Contributions and Pull Requests are welcome. When adding new platforms or improvements, please maintain modularity for easy integration.
 
 Enjoy using Gamediso – Happy Gaming!
