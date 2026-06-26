@@ -42,6 +42,25 @@ def fetch_gog_game_details(game_id: str) -> dict:
         print(f"GOG API 异常: {e}")
     return {}
 
+def get_gog_box_art_image(game_id: str) -> str:
+    """通过 GOG v2 API 获取 boxArtImage 的 href"""
+    api_url = f"https://api.gog.com/v2/games/{game_id}"
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+    try:
+        resp = requests.get(api_url, timeout=10, headers=headers)
+        if resp.status_code == 200:
+            data = resp.json()
+            # 从 _links.boxArtImage.href 获取图片 URL
+            box_art = data.get('_links', {}).get('boxArtImage', {}).get('href')
+            if box_art:
+                # 检查是否为相对路径，补全协议
+                if box_art.startswith('//'):
+                    box_art = 'https:' + box_art
+                return box_art
+    except Exception as e:
+        print(f"[GOG] 获取 box_art_image 失败: {e}")
+    return ""
+
 def get_gog_games():
     result = run_gogdl(["owned", "--json"])
     if result.returncode != 0:
@@ -51,17 +70,17 @@ def get_gog_games():
     for game in games:
         game_id = str(game.get('id'))
         title = game.get('title', 'Unknown')
-        details = fetch_gog_game_details(game_id)
-        cover_url = details.get('cover_url', '')
-        if not cover_url:
-            cover_url = game.get('image', '')
+        # 优先通过 v2 API 获取 boxArtImage
+        image_url = get_gog_box_art_image(game_id)
+        if not image_url:
+            # 降级：使用 game_id 构造标准链接
+            image_url = f"https://images.gog-statics.com/{game_id}_product_tile_304_2x.jpg"
         game_list.append({
             'game_id': game_id,
             'title': title,
-            'image_url': cover_url,
+            'image_url': image_url,
         })
     return game_list
-
 def load_gog_token():
     # 简化：检查 gogdl 是否已认证（通过检测配置文件）
     # 实际项目中可做更完善的检查

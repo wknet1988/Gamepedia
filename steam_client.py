@@ -310,8 +310,8 @@ def refresh_games_library(steamid, api_key, steam_path=None, force=False, task_i
 
         # 新游戏，插入并下载图片
         upsert_game(appid, game['name'], game['header_url'], now, game['type'])
-        if not get_cached_image_path(appid).exists():
-            download_image(game['header_url'], appid)
+        if not get_platform_image_path('steam', str(appid)).exists():
+            download_platform_image(game['header_url'], 'steam', str(appid))
         processed += 1
         if task_id and processed % 10 == 0:
             progress = 10 + int((processed / total) * 40)

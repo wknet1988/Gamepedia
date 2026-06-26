@@ -75,27 +75,44 @@ function appendGames(games) {
             }
         }
 
+        // 在循环内部，定义 runUrl
+        let runUrl = '';
+
+        if (currentPlatform.id === 'steam') {
+            storeUrl = `https://store.steampowered.com/app/${game.id}`;
+            runUrl = `steam://run/${game.id}`;
+        } else if (currentPlatform.id === 'epic') {
+            const searchQuery = encodeURIComponent(game.name);
+            storeUrl = `https://store.epicgames.com/browse?q=${searchQuery}`;
+            runUrl = `com.epicgames.launcher://apps/${game.id}?action=launch`;
+        } else if (currentPlatform.id === 'gog') {
+            const searchQuery = encodeURIComponent(game.name);
+            const langPath = userLang === 'zh' ? 'zh' : 'en';
+            storeUrl = `https://www.gog.com/${langPath}/games?query=${searchQuery}`;
+            runUrl = `goggalaxy://launch/${game.id}`;
+        } else if (currentPlatform.id === 'cubejoy') {
+            const sId = game.s_id || '';
+            storeUrl = `https://store.cubejoy.com/html/en/store/goodsdetail/detail${sId}.html`;
+            runUrl = `asuka://runapp/?id=${game.id}`;
+        }
+
+        // 运行按钮（所有平台，包括 GOG）
         let actionsHtml = '';
-        if (currentPlatform.id !== 'gog') {
+        if (runUrl) {
             let runData = '';
             if (currentPlatform.id === 'cubejoy') {
-                const id = game.id || game.game_id;
-                if (id) {
-                    const runUrl = `asuka://runapp/?id=${id}`;
-                    runData = `data-runurl="${runUrl}"`;
-                }
+                // Cubejoy 特殊处理
+                runData = `data-runurl="${runUrl}"`;
             } else {
                 runData = `data-id="${game.id}" data-platform="${currentPlatform.id}"`;
             }
-            if (runData) {
-                actionsHtml = `
-                    <div class="actions">
-                        <button class="run-btn" ${runData}>
-                            ${iconHtml} ${t.run}
-                        </button>
-                    </div>
-                `;
-            }
+            actionsHtml = `
+        <div class="actions">
+            <button class="run-btn" ${runData}>
+                ${iconHtml} ${t.run}
+            </button>
+        </div>
+    `;
         }
 
         const proxyUrl = game.image_url || '';
@@ -177,6 +194,8 @@ function runGameHandler(e) {
         window.location.href = `steam://run/${id}`;
     } else if (platform === 'epic') {
         window.location.href = `com.epicgames.launcher://apps/${id}?action=launch`;
+    } else if (platform === 'gog') {
+        window.location.href = `goggalaxy://launch/${id}`;
     }
 }
 

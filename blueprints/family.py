@@ -43,8 +43,8 @@ def api_sync_family_library():
         else:
             c.execute("INSERT INTO games (appid, name, header_url, last_updated, type) VALUES (?, ?, ?, ?, ?)",
                       (appid, game['name'], game['header_url'], now, 'shared'))
-        if not get_cached_image_path(appid).exists():
-            download_image(game['header_url'], appid)
+        if not get_platform_image_path('steam', str(appid)).exists():
+            download_platform_image(game['header_url'], 'steam', str(appid))
 
     conn.commit()
     conn.close()
