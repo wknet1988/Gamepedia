@@ -41,7 +41,7 @@ app.register_blueprint(epic_bp)
 app.register_blueprint(gog_bp)
 app.register_blueprint(cubejoy_bp)
 
-APP_VERSION = "v1.0 Release"
+APP_VERSION = "v1.1 Release"
 
 @app.route('/api/version')
 def get_version():
