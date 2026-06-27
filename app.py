@@ -3,6 +3,7 @@ import webbrowser
 import webview
 import threading
 import time
+import tkinter as tk
 from threading import Timer
 from flask import Flask, request, session, redirect, render_template, send_file, jsonify
 from flask_cors import CORS
@@ -77,7 +78,7 @@ if __name__ == '__main__':
     flask_thread.daemon = True
     flask_thread.start()
 
-    # 等待 Flask 启动（最多等待 3 秒）
+    # 等待 Flask 启动
     for _ in range(30):
         try:
             import requests
@@ -88,14 +89,29 @@ if __name__ == '__main__':
     else:
         print("警告：Flask 启动超时，但仍尝试打开窗口")
 
-    # 创建 webview 窗口
+    # 获取屏幕尺寸（使用 tkinter）
+    root = tk.Tk()
+    root.withdraw()  # 隐藏 tkinter 主窗口
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    root.destroy()
+
+    # 窗口尺寸设为屏幕尺寸的 95%，保留任务栏可见
+    win_width = int(screen_width * 0.95)
+    win_height = int(screen_height * 0.95)
+    # 居中显示
+    x = (screen_width - win_width) // 2
+    y = (screen_height - win_height) // 2
+
     webview.create_window(
         'Gamediso',
         'http://localhost:5000',
-        width=1200,
-        height=800,
+        width=win_width,
+        height=win_height,
+        x=x,
+        y=y,
         resizable=True,
         min_size=(800, 600),
-        confirm_close=True  # 关闭时确认
+        confirm_close=True
     )
     webview.start()

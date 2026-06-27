@@ -14,6 +14,8 @@ def api_login():
     login_url = get_steam_login_url(return_to)
     return jsonify({"login_url": login_url})
 
+from flask import render_template_string
+
 @auth_bp.route('/auth')
 def api_auth():
     callback_url = request.url
@@ -22,7 +24,46 @@ def api_auth():
         session['steamid'] = steamid
         config['steamid'] = steamid
         save_config(config)
-        return redirect('/')
+        # 返回提示页面，而不是重定向到首页
+        return render_template_string('''
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>授权成功 - Gamediso</title>
+                <style>
+                    body {
+                        background: #0f1a24;
+                        color: #e0e6ed;
+                        font-family: 'Segoe UI', sans-serif;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                        flex-direction: column;
+                        text-align: center;
+                    }
+                    .container {
+                        background: rgba(0,0,0,0.6);
+                        padding: 40px;
+                        border-radius: 20px;
+                        border: 1px solid #66c0f4;
+                    }
+                    h1 { color: #66c0f4; }
+                    p { font-size: 18px; }
+                    .hint { font-size: 14px; color: #8899aa; margin-top: 20px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>✅ 授权成功</h1>
+                    <p>您已成功登录 Steam 账号，可以关闭此页面了。</p>
+                    <p class="hint">如果您是在浏览器中打开此页面，请直接关闭标签页。</p>
+                </div>
+            </body>
+            </html>
+        ''')
     else:
         return "登录失败", 400
 
