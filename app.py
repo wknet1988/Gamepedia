@@ -1,5 +1,8 @@
 import os
 import webbrowser
+import webview
+import threading
+import time
 from threading import Timer
 from flask import Flask, request, session, redirect, render_template, send_file, jsonify
 from flask_cors import CORS
@@ -62,5 +65,37 @@ if __name__ == '__main__':
         save_config(config)
 
     # 自动打开浏览器
-    Timer(1, lambda: webbrowser.open('http://localhost:5000')).start()
+    # Timer(1, lambda: webbrowser.open('http://localhost:5000')).start()
+    # app.run(host='0.0.0.0', port=5000, debug=False)
+    
+def start_flask():
     app.run(host='0.0.0.0', port=5000, debug=False)
+
+if __name__ == '__main__':
+    # 在后台线程启动 Flask
+    flask_thread = threading.Thread(target=start_flask)
+    flask_thread.daemon = True
+    flask_thread.start()
+
+    # 等待 Flask 启动（最多等待 3 秒）
+    for _ in range(30):
+        try:
+            import requests
+            requests.get('http://localhost:5000', timeout=0.5)
+            break
+        except:
+            time.sleep(0.1)
+    else:
+        print("警告：Flask 启动超时，但仍尝试打开窗口")
+
+    # 创建 webview 窗口
+    webview.create_window(
+        'Gamediso',
+        'http://localhost:5000',
+        width=1200,
+        height=800,
+        resizable=True,
+        min_size=(800, 600),
+        confirm_close=True  # 关闭时确认
+    )
+    webview.start()
