@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Steam Family Sync to Gamediso
-// @name-zh      Steam 家庭库同步到GD游戏收藏馆
+// @name-zh      Steam 家庭库同步到Gamediso
 // @namespace    http://localhost:5000
 // @version      1.2.3
 // @description  Fetch Steam family library and sync to Gamediso
@@ -18,12 +18,12 @@
     // 国际化文本
     const i18n = {
         zh: {
-            sync_btn: '📀 同步到GD游戏收藏馆',
+            sync_btn: '📀 同步到Gamediso',
             sync_btn_syncing: '同步中...',
             login_error: '无法获取登录信息，请确保已登录 Steam 商店',
             sync_success: (family_name, count) => `同步成功！家庭组：${family_name}，共 ${count} 款游戏`,
             sync_failed: (error) => `同步失败：${error || '未知错误'}`,
-            network_error: '网络错误，请确保本地GD游戏收藏馆服务已启动 (http://localhost:5000)'
+            network_error: '网络错误，请确保本地Gamediso服务已启动 (http://localhost:5000)'
         },
         en: {
             sync_btn: '📀 Sync to Gamediso',
